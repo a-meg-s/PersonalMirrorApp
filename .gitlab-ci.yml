@@ -7,7 +7,17 @@
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 stages:
 - test
+- deploy
+
 sast:
   stage: test
 include:
 - template: Security/SAST.gitlab-ci.yml
+
+deploy_to_github:
+  stage: deploy
+  script:
+    - git remote add github https://a-meg-s:${GITHUB_TOKEN}@github.com/a-meg-s/PersonalMirrorApp.git
+    - git push github main
+  only:
+    - main
