@@ -36,6 +36,7 @@ dependencies {
     implementation libs.constraintlayout
     implementation project(':OpenCV')
     implementation libs.play.services.tflite.java
+    implementation libs.exifinterface
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

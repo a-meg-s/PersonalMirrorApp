@@ -1,2 +1,2 @@
-ninja: Entering directory `C:\Users\nicog\AndroidStudioProjects\OpenCVTest\OpenCV\.cxx\Debug\5n312735\x86_64'
+ninja: Entering directory `C:\Users\nicog\AndroidStudioProjects\IIP-Repository\spiegelapp-blanktemplate\AppFilesNico\OpenCV\.cxx\Debug\5n312735\x86_64'
 ninja: no work to do.
