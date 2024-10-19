@@ -4,11 +4,14 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.opencv.android.OpenCVLoader;
+
+import java.util.List;
 
 public class Main extends AppCompatActivity {
     private static final String TAG = "OpenCVTest";
@@ -34,43 +37,47 @@ public class Main extends AppCompatActivity {
 
         Log.d(TAG, "onCreate: Activity created, setting content view.");
 
-        // Initialize ImageView elements
-        ImageView imageView1 = findViewById(R.id.croppedFaceView1);
-        ImageView imageView2 = findViewById(R.id.croppedFaceView2);
-        Log.d(TAG, "onCreate: ImageView initialized.");
+        // Initialize ImageView containers (LinearLayouts for dynamic display of images)
+        LinearLayout imageContainer1 = findViewById(R.id.imageContainer1);
+        LinearLayout imageContainer2 = findViewById(R.id.imageContainer2);
+        Log.d(TAG, "onCreate: Image containers initialized.");
 
         // Load images from assets
         Bitmap bitmap1 = assetUtils.loadImageFromAssets("Fabian2.jpg");
-        Bitmap bitmap2 = assetUtils.loadImageFromAssets("Nico1.jpg");
+        Bitmap bitmap2 = assetUtils.loadImageFromAssets("Nico2.jpg");
 
         if (bitmap1 != null && bitmap2 != null) {
             Log.d(TAG, "onCreate: Images loaded successfully, starting face detection.");
 
             // Detect and crop faces from both images
-            Bitmap croppedFace1 = FaceDetection.detectAndCropFaceOpenCV(this, bitmap1);
-            Bitmap croppedFace2 = FaceDetection.detectAndCropFaceOpenCV(this, bitmap2);
+            List<Bitmap> detectedFaces1 = FaceDetection.detectAndCropFaceOpenCV(this, bitmap1);
+            List<Bitmap> detectedFaces2 = FaceDetection.detectAndCropFaceOpenCV(this, bitmap2);
 
-            if (croppedFace1 != null && croppedFace2 != null) {
-                Log.d(TAG, "onCreate: Faces detected and cropped, starting comparison.");
+            if (!detectedFaces1.isEmpty() && !detectedFaces2.isEmpty()) {
+                Log.d(TAG, "onCreate: Faces detected, starting comparison.");
 
-                // Display cropped faces in ImageViews
-                imageView1.setImageBitmap(croppedFace1);
-                imageView2.setImageBitmap(croppedFace2);
-
-                double dist = FaceRecognition.compareFaces(faceRecognitionAlgorithm, croppedFace1, croppedFace2);
-
-                if (dist < 0.6) {
-                    Log.d(TAG, "Faces are the SAME! Distance: " + dist);
-                } else {
-                    Log.d(TAG, "Faces are DIFFERENT! Distance: " + dist);
+                // Display detected faces from bitmap1
+                for (Bitmap face : detectedFaces1) {
+                    ImageView imageView = new ImageView(this);
+                    imageView.setImageBitmap(face);
+                    imageContainer1.addView(imageView);
                 }
 
+                // Display detected faces from bitmap2
+                for (Bitmap face : detectedFaces2) {
+                    ImageView imageView = new ImageView(this);
+                    imageView.setImageBitmap(face);
+                    imageContainer2.addView(imageView);
+                }
+
+                // Compare each face in detectedFaces1 to each face in detectedFaces2
+                FaceRecognition.compareDetectedFaces(detectedFaces1, detectedFaces2, faceRecognitionAlgorithm);
+
             } else {
-                Log.e(TAG, "onCreate: No face detected in one or both images.");
+                Log.e(TAG, "onCreate: No faces detected in one or both images.");
             }
         } else {
             Log.e(TAG, "onCreate: Failed to load one or both images from assets.");
         }
     }
 }
-

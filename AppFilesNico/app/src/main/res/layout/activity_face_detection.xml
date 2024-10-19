@@ -4,17 +4,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/croppedFaceView1"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:scaleType="centerCrop" />
+    <LinearLayout
+        android:id="@+id/imageContainer1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" />
 
-    <ImageView
-        android:id="@+id/croppedFaceView2"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:scaleType="centerCrop" />
+    <LinearLayout
+        android:id="@+id/imageContainer2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" />
+
 
 
 </LinearLayout>

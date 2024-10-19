@@ -14,16 +14,20 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FaceDetection {
 
-    public static Bitmap detectAndCropFaceOpenCV(Context context, Bitmap bitmap) {
+    public static List<Bitmap> detectAndCropFaceOpenCV(Context context, Bitmap bitmap) {
         Log.d("FaceDetection", "detectAndCropFaceOpenCV: Starting face detection.");
         Mat mat = new Mat();
         org.opencv.android.Utils.bitmapToMat(bitmap, mat);
 
         Log.d("FaceDetection", "detectAndCropFaceOpenCV: Converted Bitmap to Mat.");
         CascadeClassifier faceDetector = loadCascade(context, "haarcascade_frontalface_alt.xml");
+        List<Bitmap> detectedFaces = new ArrayList<>();
+
         if (faceDetector != null) {
             Log.d("FaceDetection", "detectAndCropFaceOpenCV: Face detector loaded successfully.");
             // Detect Faces
@@ -45,12 +49,13 @@ public class FaceDetection {
 
                 // Resize Bitmap
                 Log.d("FaceDetection", "detectAndCropFaceOpenCV: Face cropped and normalized, resizing to 160x160.");
-                return Bitmap.createScaledBitmap(croppedNormalizedBitmap, 160, 160, true);
+                Bitmap resizedFace = Bitmap.createScaledBitmap(croppedNormalizedBitmap, 160, 160, true);
+                detectedFaces.add(resizedFace);
             }
         } else {
             Log.e("FaceDetection", "detectAndCropFaceOpenCV: Failed to load the face detector.");
         }
-        return null;
+        return detectedFaces    ;
     }
 
     public static CascadeClassifier loadCascade(Context context, String fileName) {
