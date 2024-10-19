@@ -10,12 +10,12 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class AssetUtils {
+public class AssetManager {
 
     private Context context;
 
     // Constructor to pass context
-    public AssetUtils(Context context) {
+    public AssetManager(Context context) {
         this.context = context;
     }
 

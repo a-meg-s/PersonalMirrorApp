@@ -22,11 +22,12 @@ public class Main extends AppCompatActivity {
         setContentView(R.layout.activity_face_detection); // Replace with your layout
 
         // Initialize AssetUtils here, after the activity is created
-        AssetUtils assetUtils = new AssetUtils(this);
+        AssetManager assetManager = new AssetManager(this);
 
         // Load face recognition algorithm
-        String faceRecognitionAlgorithm = assetUtils.getTextfileFromAssets("nn4.small2.v1.t7");
+        String faceRecognitionAlgorithm = assetManager.getTextfileFromAssets("nn4.small2.v1.t7");
 
+        //Initialize OpenCVLibrary
         if (OpenCVLoader.initDebug()) {
             Log.i(TAG, "OpenCV loaded successfully");
         } else {
@@ -43,8 +44,8 @@ public class Main extends AppCompatActivity {
         Log.d(TAG, "onCreate: Image containers initialized.");
 
         // Load images from assets
-        Bitmap bitmap1 = assetUtils.loadImageFromAssets("Fabian2.jpg");
-        Bitmap bitmap2 = assetUtils.loadImageFromAssets("Nico2.jpg");
+        Bitmap bitmap1 = assetManager.loadImageFromAssets("Fabian2.jpg");
+        Bitmap bitmap2 = assetManager.loadImageFromAssets("Nico2.jpg");
 
         if (bitmap1 != null && bitmap2 != null) {
             Log.d(TAG, "onCreate: Images loaded successfully, starting face detection.");
