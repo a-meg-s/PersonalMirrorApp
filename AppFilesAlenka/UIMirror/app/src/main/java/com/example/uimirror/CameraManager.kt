@@ -3,6 +3,7 @@ package com.example.uimirror
 import android.content.Context
 import android.util.Log
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -24,6 +25,8 @@ class CameraManager (private val context: Context, private val previewView: Prev
                 // Setzt die Oberfläche für die Vorschau
                 it.setSurfaceProvider(previewView?.surfaceProvider)
             }
+
+
             try {
                 cameraProvider.unbindAll() // Trennt alle vorherigen Bindungen (wenn kamera schon verwendet wurde)
                 val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA // Wählt die Rückkamera aus
