@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "UIMirror"
 include(":app")
- 
+include(":opencv")
