@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,7 @@ import androidx.core.content.ContextCompat
 import com.example.uimirror.CameraManager
 import com.example.uimirror.databinding.ActivityMainBinding
 import com.example.uimirror.PermissionHandler
+import org.opencv.android.OpenCVLoader
 
 /*
 // importierte Packete für die Funktion der App
@@ -56,9 +58,22 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        //Initialize OpenCVLibrary
+        if (OpenCVLoader.initDebug()) {
+            Log.i("MainActivity", "OpenCV loaded successfully");
+        } else {
+            Log.e("MainActivity", "OpenCV initialization failed!");
+            Toast.makeText(this, "OpenCV initialization failed!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+
         // Initialisiere die Klassen für Kamera und Berechtigungen
         cameraManager = CameraManager(this, binding.previewView)
         permissionHandler = PermissionHandler(this)
+
+
 
         // Berechtigungen beim Start überprüfen
         requestCameraPermissions()

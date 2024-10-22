@@ -2,15 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Nachrichten Berechtigung-->
+    <!-- Messages Permission -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!--Kameraberechtigung-->
+    <!-- Camera Permission -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <!-- Fügt den uses-feature Tag für die Kamera hinzu, wenn kamera nicht erforderlich ist Required = false -->
+    <!-- Declares camera feature, not required -->
     <uses-feature android:name="android.hardware.camera" android:required="false" />
-
-
 
     <application
         android:allowBackup="true"
@@ -21,24 +19,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.UIMirror"
-        android:permission="android.permission.POST_NOTIFICATIONS"
         tools:targetApi="31">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.UIMirror">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity android:name=".AlarmEditorActivity" />
         <receiver android:name=".AlarmReceiver" />
-
-
     </application>
-
 </manifest>

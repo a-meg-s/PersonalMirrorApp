@@ -8,6 +8,8 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
 import java.io.File;
@@ -17,16 +19,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 public class FaceDetection {
 
-    public static List<Bitmap> detectAndCropFaceOpenCV(Context context, Bitmap bitmap) {
+    public static List<Mat> detectAndCropFaceOpenCV(Mat mat, CascadeClassifier faceDetector) {
         Log.d("FaceDetection", "detectAndCropFaceOpenCV: Starting face detection.");
-        Mat mat = new Mat();
-        org.opencv.android.Utils.bitmapToMat(bitmap, mat);
-
-        Log.d("FaceDetection", "detectAndCropFaceOpenCV: Converted Bitmap to Mat.");
-        CascadeClassifier faceDetector = loadCascade(context, "haarcascade_frontalface_alt.xml");
-        List<Bitmap> detectedFaces = new ArrayList<>();
+        List<Mat> detectedFaces = new ArrayList<>();
 
         if (faceDetector != null) {
             Log.d("FaceDetection", "detectAndCropFaceOpenCV: Face detector loaded successfully.");
@@ -43,20 +42,19 @@ public class FaceDetection {
                 Mat normalizedFace = new Mat();
                 Core.normalize(croppedFace, normalizedFace, 0, 255, Core.NORM_MINMAX);
 
-                // Turn Normalized, cropped Face into Bitmap
-                Bitmap croppedNormalizedBitmap = Bitmap.createBitmap(rect.width, rect.height, Bitmap.Config.ARGB_8888);
-                org.opencv.android.Utils.matToBitmap(normalizedFace, croppedNormalizedBitmap);
+                // Resize to 160x160
+                Log.d("FaceDetection", "detectAndCropFaceOpenCV: Resizing face to 160x160.");
+                Mat resizedFace = new Mat();
+                Imgproc.resize(normalizedFace, resizedFace, new Size(160, 160));
 
-                // Resize Bitmap
-                Log.d("FaceDetection", "detectAndCropFaceOpenCV: Face cropped and normalized, resizing to 160x160.");
-                Bitmap resizedFace = Bitmap.createScaledBitmap(croppedNormalizedBitmap, 160, 160, true);
                 detectedFaces.add(resizedFace);
             }
         } else {
             Log.e("FaceDetection", "detectAndCropFaceOpenCV: Failed to load the face detector.");
         }
-        return detectedFaces    ;
+        return detectedFaces;
     }
+
 
     public static CascadeClassifier loadCascade(Context context, String fileName) {
         try {
