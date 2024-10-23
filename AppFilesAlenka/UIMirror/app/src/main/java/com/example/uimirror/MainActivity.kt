@@ -89,6 +89,12 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AlarmEditorActivity::class.java)
             startActivity(intent)
         }
+        // Setze den OnClickListener für das Alarm-Icon
+        binding.mailIcon?.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private fun requestCameraPermissions() {
