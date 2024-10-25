@@ -18,17 +18,6 @@
 
         <!--Container für die Icons-->
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/settingsIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="24dp"
-            android:alpha="0.9"
-            android:contentDescription="settings"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@android:drawable/ic_menu_manage" />
 
         <androidx.camera.view.PreviewView
             android:id="@+id/previewView"
@@ -111,6 +100,16 @@
         </LinearLayout>
 
         <!-- Icon 1 settings (unter Icon 2) -->
-
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/settingsIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="24dp"
+            android:alpha="0.9"
+            android:contentDescription="settings"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@android:drawable/ic_menu_manage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

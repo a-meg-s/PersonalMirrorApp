@@ -60,7 +60,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-
+    // Berechtigungen
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
 
 
 

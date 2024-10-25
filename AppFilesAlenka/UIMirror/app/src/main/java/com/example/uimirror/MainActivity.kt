@@ -1,48 +1,25 @@
 package com.example.uimirror
 
+// importierte Packete für die Funktion der App
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import android.provider.Settings
+import androidx.appcompat.app.AlertDialog
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.uimirror.CameraManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.example.uimirror.databinding.ActivityMainBinding
+import com.google.android.material.snackbar.Snackbar
 import com.example.uimirror.PermissionHandler
 import org.opencv.android.OpenCVLoader
 
-/*
-// importierte Packete für die Funktion der App
-import android.Manifest
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.content.Intent
-import android.widget.Toast
-import android.os.Handler
-import android.os.Looper
-import android.nfc.Tag
-import android.os.Bundle
-import android.provider.Settings
-import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
-
-// Import CameraX
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.example.uimirror.databinding.ActivityMainBinding
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import androidx.activity.result.contract.ActivityResultContracts
-*/
 
 
 // MainActivity ist die Hauptklasse der App, die von AppCompatActivity erbt
@@ -53,12 +30,30 @@ class MainActivity : AppCompatActivity() {
     private lateinit var cameraManager: CameraManager //Instanz von CameraManager
     private lateinit var permissionHandler: PermissionHandler // Instanz von PermissionHandler
 
+    // Getter-Methoden für den Zugriff im PermissionHandler
+    fun getCameraManager(): CameraManager = cameraManager
+    fun getBinding(): ActivityMainBinding = binding
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        initializeOpenCV()
+        initializeCamera()
+        setupUIListeners()
 
+        // Berechtigungen beim Start überprüfen
+        //requestCameraPermissions()
+        //permissionHandler.explainPermissionRationale()
+        if(!permissionHandler.isNotificationPermissionGranted()){
+            permissionHandler.showPermissionNotificationDeniedDialog()
+            }
+
+    }
+
+    private fun initializeOpenCV() {
         //Initialize OpenCVLibrary
         if (OpenCVLoader.initDebug()) {
             Log.i("MainActivity", "OpenCV loaded successfully");
@@ -67,21 +62,28 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "OpenCV initialization failed!", Toast.LENGTH_LONG).show();
             return;
         }
+    }
 
-
+    private fun initializeCamera() {
         // Initialisiere die Klassen für Kamera und Berechtigungen
         cameraManager = CameraManager(this, binding.previewView)
         permissionHandler = PermissionHandler(this)
 
-
-
         // Berechtigungen beim Start überprüfen
-        requestCameraPermissions()
+        if (permissionHandler.isCameraPermissionGranted()) {
+            cameraManager.startCamera()
+        } else {
+            // Erklären warum Berechtigung benötigt
+            permissionHandler.showPermissionCameraDeniedDialog()
+        }
+    }
 
+
+    private fun setupUIListeners() {
         // Setze den OnClickListener für das Settings-Icon
         binding.settingsIcon?.setOnClickListener {
             // Zeigt den Dialog an, um zur App-Einstellungsseite weiterzuleiten
-            permissionHandler.showPermissionDeniedDialog()
+            permissionHandler.showPermissionCameraDeniedDialog()
         }
 
         // Setze den OnClickListener für das Alarm-Icon
@@ -89,12 +91,76 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AlarmEditorActivity::class.java)
             startActivity(intent)
         }
-        // Setze den OnClickListener für das Alarm-Icon
+        // Setze den OnClickListener für das zurück zum Login (mail Icon)
         binding.mailIcon?.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
+    }
 
+
+
+    override fun onResume() {
+        super.onResume()
+        // Überprüfen, ob die Berechtigungen erteilt wurden, um die Kamera zu starten
+        if (permissionHandler.isCameraPermissionGranted()) {
+            cameraManager.startCamera()
+        } else {
+            // Berechtigungen fehlen, Dialog anzeigen
+            permissionHandler.showPermissionCameraDeniedDialog()
+        }
+    }
+
+    override fun onRequestPermissionsResult( requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        permissionHandler.handlePermissionsResult(requestCode, grantResults)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraManager.shutdown() // Stoppt die Kamera, wenn die Aktivität zerstört wird
+    }
+
+    // Neue Methode zum Anzeigen einer Benachrichtigung
+    fun showNotification(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+}
+
+    /*private fun requestAndroidCameraPermissions() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.CAMERA),
+                PermissionHandler.REQUEST_CODE_PERMISSIONS
+            )
+        } else {
+            // Berechtigungen immer wieder neu anfragen, auch wenn sie erteilt sind
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.CAMERA),
+                PermissionHandler.REQUEST_CODE_PERMISSIONS
+            )
+        }
+    }
+}*/
+/*
+    private fun explainPermissionRationale() {
+        // Zeige zuerst eine Erklärung, warum die Berechtigung benötigt wird
+        val builder = MaterialAlertDialogBuilder(this)
+        builder.setTitle("Berechtigung erforderlich")
+        builder.setMessage("Die Anwendung benötigt die Kameraberechtigung, um die Mirror- und Gesichtserkennung-Funktionalität zu ermöglichen. Ohne diese Berechtigung funktioniert die App nicht vollständig.")
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+            // Fordere die Berechtigung nach der Erklärung an
+            requestCameraPermissions()
+        }
+        builder.setCancelable(false)
+        builder.show()
     }
 
     private fun requestCameraPermissions() {
@@ -103,8 +169,13 @@ class MainActivity : AppCompatActivity() {
             cameraManager.startCamera() // Starte die Kamera, wenn die Berechtigung erteilt wurde
         } else {
             // Fordert Berechtigungen an
-            ActivityCompat.requestPermissions(this, PermissionHandler.REQUIRED_PERMISSIONS, PermissionHandler.REQUEST_CODE_PERMISSIONS)
-            Toast.makeText(this, "Bitte erlauben Sie der App den Zugriff auf die Kamera in der nächsten Anfrage.", Toast.LENGTH_SHORT).show() // Kurze Meldung anzeigen
+            //ActivityCompat.requestPermissions(this, PermissionHandler.REQUIRED_PERMISSIONS, PermissionHandler.REQUEST_CODE_PERMISSIONS)
+           // Toast.makeText(this, "Bitte erlauben Sie der App den Zugriff auf die Kamera in der nächsten Anfrage.", Toast.LENGTH_SHORT).show() // Kurze Meldung anzeigen
+            Snackbar.make(binding.root, "Bitte erlauben Sie den Kamerazugriff", Snackbar.LENGTH_INDEFINITE)
+                .setAction("OK") {
+                    ActivityCompat.requestPermissions(this, PermissionHandler.REQUIRED_PERMISSIONS, PermissionHandler.REQUEST_CODE_PERMISSIONS)
+                }
+                .show()
         }
     }
 
@@ -116,9 +187,33 @@ class MainActivity : AppCompatActivity() {
                 cameraManager.startCamera() // Starte die Kamera, wenn die Berechtigung erteilt wurde
             } else {
                 // Kurze Meldung, wenn die Berechtigung abgelehnt wurde
+                showPermissionDeniedDialog()
                 Toast.makeText(this, "Kamerazugriff verweigert. Bitte aktivieren Sie ihn in den Einstellungen.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = android.net.Uri.fromParts("package", packageName, null)
+        }
+        startActivity(intent)
+    }
+
+    private fun showPermissionDeniedDialog() {
+        val builder = MaterialAlertDialogBuilder(this)
+        builder.setTitle("Berechtigung verweigert")
+        builder.setMessage("Die Applikation benötigt die Kameraberechtigung. Bitte erteilen Sie die Berechtigung manuell in den Einstellungen.")
+        builder.setPositiveButton("Zu den Einstellungen") { dialog, _ ->
+            dialog.dismiss()
+            openAppSettings()
+        }
+        builder.setNegativeButton("Abbrechen") { dialog, _ ->
+            dialog.dismiss()
+            finish() // App schließen oder eine Einschränkung anzeigen
+        }
+        builder.setCancelable(false)
+        builder.show()
     }
 
     /*
@@ -171,5 +266,4 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         cameraManager.shutdown() // Stoppt die Kamera, wenn die Aktivität zerstört wird
-    }
-}
+    }*/
