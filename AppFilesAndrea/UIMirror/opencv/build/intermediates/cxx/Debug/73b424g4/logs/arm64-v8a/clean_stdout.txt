@@ -1,0 +1,3 @@
+ninja: Entering directory `C:\Users\Andrea\OneDrive - Hochschule Luzern\Desktop\IIP-Mirror\try2\AppFilesAndrea\UIMirror\opencv\.cxx\Debug\73b424g4\arm64-v8a'
+[1/1] Cleaning all built files...
+Cleaning... 2 files.
