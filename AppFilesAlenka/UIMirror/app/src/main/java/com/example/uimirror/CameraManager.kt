@@ -2,6 +2,7 @@ package com.example.uimirror
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.os.Environment
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -10,15 +11,20 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
+import org.opencv.core.Core
+import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.core.MatOfByte
 import org.opencv.dnn.Dnn
 import org.opencv.dnn.Net
 import org.opencv.imgcodecs.Imgcodecs
+import org.opencv.imgproc.Imgproc
 import org.opencv.objdetect.CascadeClassifier
+import java.io.File
 import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.math.log
 
 // This class manages the camera and its preview
 class CameraManager(private val context: Context, private val previewView: PreviewView?) {
@@ -32,6 +38,7 @@ class CameraManager(private val context: Context, private val previewView: Previ
         private var faceDetector: CascadeClassifier? = null
         private var faceRecognitionNet: Net? = null
         private var assetPhoto: Mat? = null
+        private var assetFaces: List<Mat>? = null
 
         // Load the models if they are not already loaded
         private fun loadModels(context: Context) {
@@ -40,7 +47,12 @@ class CameraManager(private val context: Context, private val previewView: Previ
                 Log.d("CameraManager", "Cascade classifier loaded once.")
             }
             if (faceRecognitionNet == null) {
-                faceRecognitionNet = Dnn.readNetFromTorch(FaceRecognition.getTextfileFromAssets(context, "nn4.small2.v1.t7"))
+                faceRecognitionNet = Dnn.readNetFromTorch(
+                    FaceRecognition.getTextfileFromAssets(
+                        context,
+                        "nn4.small2.v1.t7"
+                    )
+                )
                 Log.d("CameraManager", "OpenFace model loaded once.")
             }
             if (assetPhoto == null) {
@@ -48,20 +60,21 @@ class CameraManager(private val context: Context, private val previewView: Previ
                 if (bitmap != null) {
                     assetPhoto = Mat() // Initialize the Mat before using it
                     org.opencv.android.Utils.bitmapToMat(bitmap, assetPhoto)
+                    Imgproc.cvtColor(assetPhoto, assetPhoto, Imgproc.COLOR_RGBA2BGR)
                     Log.d("CameraManager", "AssetPhoto loaded once.")
+                    assetFaces = FaceDetection.detectAndCropFaceOpenCV(assetPhoto, faceDetector)
                 } else {
                     Log.e("CameraManager", "Failed to load bitmap from assets.")
                 }
             }
         }
 
-        // Provide access to the loaded face detector and recognition net
-        fun getFaceDetector(): CascadeClassifier? = faceDetector
-        fun getFaceRecognitionNet(): Net? = faceRecognitionNet
     }
 
     // Starts the camera
     fun startCamera() {
+
+
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
@@ -70,7 +83,7 @@ class CameraManager(private val context: Context, private val previewView: Previ
             }
 
             val imageAnalysis = ImageAnalysis.Builder()
-                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
 
@@ -81,7 +94,12 @@ class CameraManager(private val context: Context, private val previewView: Previ
             try {
                 cameraProvider.unbindAll()
                 val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-                cameraProvider.bindToLifecycle(context as androidx.lifecycle.LifecycleOwner, cameraSelector, preview, imageAnalysis)
+                cameraProvider.bindToLifecycle(
+                    context as androidx.lifecycle.LifecycleOwner,
+                    cameraSelector,
+                    preview,
+                    imageAnalysis
+                )
             } catch (exc: Exception) {
                 Log.e("CameraManager", "Failed to bind camera: ${exc.message}")
             }
@@ -91,27 +109,96 @@ class CameraManager(private val context: Context, private val previewView: Previ
     private val cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
 
     private fun processImageProxy(imageProxy: ImageProxy) {
-        val byteBuffer = imageProxy.planes[0].buffer
-        val bytes = byteBuffer.toByteArray()
+        val yPlane = imageProxy.planes[0].buffer
+        val uPlane = imageProxy.planes[1].buffer
+        val vPlane = imageProxy.planes[2].buffer
 
-        // Convert byte array to OpenCV Mat
-        val mat = Imgcodecs.imdecode(MatOfByte(*bytes), Imgcodecs.IMREAD_UNCHANGED)
+        // Convert ByteBuffers to ByteArray
+        val yBytes = ByteArray(yPlane.remaining())
+        yPlane.get(yBytes)
 
-        // Now pass the mat to your detection and recognition logic
-        detectAndRecognizeFaces(mat)
+        val uBytes = ByteArray(uPlane.remaining())
+        val vBytes = ByteArray(vPlane.remaining())
+        uPlane.get(uBytes)
+        vPlane.get(vBytes)
 
-        imageProxy.close() // Close the ImageProxy after processing
+        // Create a Mat for the Y plane
+        val yMat = Mat(imageProxy.height, imageProxy.width, CvType.CV_8UC1)
+        yMat.put(0, 0, yBytes)
+
+        // Interleave U and V bytes to form a single UV plane
+        val uvInterleaved = ByteArray(uBytes.size * 2)
+        for (i in uBytes.indices) {
+            uvInterleaved[i * 2] = uBytes[i]
+            uvInterleaved[i * 2 + 1] = vBytes[i]
+        }
+
+        // Create a Mat for the UV plane
+        val uvMat = Mat(imageProxy.height / 2, imageProxy.width / 2, CvType.CV_8UC2)
+        uvMat.put(0, 0, uvInterleaved)
+
+        // Convert YUV to BGR using cvtColorTwoPlane
+        val bgrMat = Mat()
+        Imgproc.cvtColorTwoPlane(yMat, uvMat, bgrMat, Imgproc.COLOR_YUV2BGR_NV21)
+
+        Log.d("processImageProxy", "bgrMat has this many Channels: " + bgrMat.channels().toString())
+
+        val flippedBGRMat = Mat()
+
+        if (bgrMat.empty()) {
+            Log.e("CameraManager", "bgMat is empty, check conversion.")
+        } else {
+            Log.d("CameraManager", "bgMat is successfully created.")
+            Core.flip(bgrMat, flippedBGRMat, 0)
+
+            Log.d("processImageProxy", "flippedBGRMat has this many Channels: " + flippedBGRMat.channels().toString())
+
+            // Save bgMat to external storage
+            saveMatToFile(flippedBGRMat, "debugImage.jpg")
+        }
+
+        // Now pass the BGR Mat to your detection and recognition logic
+        detectAndRecognizeFaces(flippedBGRMat)
+
+
+
+        // Close the ImageProxy after processing
+        imageProxy.close()
+    }
+    private fun saveMatToFile(mat: Mat, fileName: String) {
+        // Convert Mat to a Bitmap
+        val bitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888)
+        org.opencv.android.Utils.matToBitmap(mat, bitmap)
+
+        // Specify the path and file
+        val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath
+        val file = File(path, fileName)
+
+        // Save the bitmap as JPEG
+        try {
+            file.outputStream().use { fos ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos)
+                Log.d("CameraManager", "Image saved successfully: ${file.absolutePath}")
+            }
+        } catch (e: Exception) {
+            Log.e("CameraManager", "Failed to save image: ${e.message}")
+        }
     }
 
-    private fun detectAndRecognizeFaces(mat: Mat) {
-        val faceDetector = getFaceDetector()
-        val faceRecognitionNet = getFaceRecognitionNet()
 
+    private fun detectAndRecognizeFaces(mat: Mat) {
+
+        Log.d("detectAndRecognizeFaces", "mat has this many Channels: " + mat.channels().toString())
+        Log.d("detectAndRecognizeFaces", "assetPhoto has this many Channels: " + assetPhoto?.channels()
+            .toString())
         if (faceDetector != null && faceRecognitionNet != null) {
             val detectedFacesCamera = FaceDetection.detectAndCropFaceOpenCV(mat, faceDetector)
-            val detectedFacesAssets = FaceDetection.detectAndCropFaceOpenCV(assetPhoto, faceDetector)
 
-            FaceRecognition.compareDetectedFaces(detectedFacesCamera, detectedFacesAssets, faceRecognitionNet)
+            FaceRecognition.compareDetectedFaces(
+                detectedFacesCamera,
+                assetFaces,
+                faceRecognitionNet
+            )
 
         } else {
             Log.e("CameraManager", "Face detector or recognition model is not loaded.")
@@ -124,6 +211,7 @@ class CameraManager(private val context: Context, private val previewView: Previ
         get(byteArray)
         return byteArray
     }
+
 
     // Stops the camera
     fun shutdown() {
