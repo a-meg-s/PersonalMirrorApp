@@ -33,7 +33,7 @@ public class FaceDetection {
             MatOfRect faceDetections = new MatOfRect();
             faceDetector.detectMultiScale(mat, faceDetections);
 
-            Log.d("FaceDetection", "detectAndCropFaceOpenCV: Faces detected: " + faceDetections.toArray().length);
+            Log.d("FaceDetection", "detectAndCropFaceOpenCV: Nr. of Faces detected: " + faceDetections.toArray().length);
             for (Rect rect : faceDetections.toArray()) {
                 // Crop the detected face from the image
                 Mat croppedFace = new Mat(mat, rect);
@@ -54,38 +54,4 @@ public class FaceDetection {
         }
         return detectedFaces;
     }
-
-
-    public static CascadeClassifier loadCascade(Context context, String fileName) {
-        try {
-            // Load the cascade file from the application assets
-            InputStream is = context.getAssets().open(fileName);
-            File cascadeDir = context.getDir("cascade", Context.MODE_PRIVATE);
-            File cascadeFile = new File(cascadeDir, fileName);
-
-            // Write the file to a location accessible by OpenCV
-            OutputStream os = new FileOutputStream(cascadeFile);
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = is.read(buffer)) != -1) {
-                os.write(buffer, 0, bytesRead);
-            }
-            is.close();
-            os.close();
-
-            // Load the classifier from the copied file
-            CascadeClassifier faceDetector = new CascadeClassifier(cascadeFile.getAbsolutePath());
-
-            // Delete the file after loading (optional)
-            if (faceDetector.empty()) {
-                faceDetector = null;
-            }
-
-            return faceDetector;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
-
-}
