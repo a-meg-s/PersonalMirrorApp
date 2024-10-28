@@ -8,77 +8,64 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.graphics.Color
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class SongAdapter(
-    private val songs: List<Song>,
-    private val onPlayClick: (Song) -> Unit,
-    private val onSongSelect: (Song) -> Unit
+    private val songs: List<Song>, // Liste von Song-Objekten
+    private val onPlayClick: (Song, ImageButton) -> Unit, // Callback für den Play-Button
+    private val onSongSelect: (Song) -> Unit // Callback für die Songauswahl
 ) : RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
 
+    private var selectedPosition: Int = RecyclerView.NO_POSITION
+
+    // ViewHolder-Klasse, die UI-Elemente für jeden Song hält
     class SongViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val songName: TextView = view.findViewById(R.id.songName)
-        val artistName: TextView = view.findViewById(R.id.artistName)
-        val playButton: ImageButton = view.findViewById(R.id.playButton)
+        // Sucht UI-Element in Layout song_item anhand ID
+        val songName: TextView = view.findViewById(R.id.songName) // TextView für den Songnamen
+        val artistName: TextView = view.findViewById(R.id.artistName)  // TextView für den Künstlernamen
+        val playButton: ImageButton = view.findViewById(R.id.playButton) // Button zum Abspielen des Songs
     }
 
+    // Erstellt eine neue ViewHolder-Instanz, wenn benötigt
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
+        // wandelt XML-Layout in View-Objekte um mit LayoutInflater
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.song_item, parent, false)
-        return SongViewHolder(view)
+
+        return SongViewHolder(view) // gibt SongViewHolder-Instanz zurück
     }
 
+    // Bindet Daten an ViweHolder-Instanz
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
-        val song = songs[position]
-        holder.songName.text = song.name
-        holder.artistName.text = song.artist
-        holder.playButton.setOnClickListener { onPlayClick(song) }
-        holder.itemView.setOnClickListener { onPlayClick(song) }
+        val song = songs[holder.adapterPosition] // Holt den Song an der aktuellen Adapter-Position
+        holder.songName.text = song.name // Setzt Text des TextView für Songnamen
+        holder.artistName.text = song.artist // Setzt Text des TextView für Künstlernamen
+
+        // Setzt Hintergrund basierend auf der ausgewählten Position
+        if (position == selectedPosition) {
+            holder.itemView.setBackgroundColor(Color.parseColor("#c9bce7")) // Lila-Farbe
+        } else {
+            holder.itemView.setBackgroundColor(Color.TRANSPARENT) // Standard-Hintergrund
+        }
+
+        // Setzt den Click-Listener für den Play-Button
+        holder.playButton.setOnClickListener {
+            onPlayClick(song, holder.playButton)
+        }
+        // Setzt den Click-Listener für das gesamte Item
+        holder.itemView.setOnClickListener {
+            onSongSelect(song) // Ruft onSongSelect auf für die Songauswahl
+            onPlayClick(song, holder.playButton)
+            selectedPosition = holder.adapterPosition // Aktualisiert die ausgewählte Position
+            notifyDataSetChanged() // Aktualisiert die RecyclerView
+        } // Optional Spielt song auch ab, beim klick auf den Song
     }
 
+    // Gibt Anzahl Songs in Liste zurück, die der Adapter verwalten soll.
     override fun getItemCount() = songs.size
 }
 
 
 
-/*class SongAdapter(
-    private val context: Context,
-    private val songList: List<Int>, // List of song resource IDs
-    private val onSongSelected: (Int) -> Unit // Callback for selected song
-) : RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.activity_song_selection, parent, false)
-
-        return SongViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
-        val songResId = songList[position]
-        holder.bind(songResId)
-    }
-
-    override fun getItemCount() = songList.size
-
-    inner class SongViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val songItemLayout: LinearLayout = itemView.findViewById(R.id.songItemLayout)
-        private val songNameTextView: TextView = itemView.findViewById(R.id.songName)
-        private val playButton: ImageView = itemView.findViewById(R.id.playButton)
-
-        fun bind(songResId: Int) {
-            songNameTextView.text = context.resources.getResourceEntryName(songResId)
-
-            playButton.setOnClickListener {
-                MediaPlayer.create(context, songResId).apply {
-                    start()
-                    setOnCompletionListener { release() } // Release after playback
-                }
-            }
-
-            songItemLayout.setOnClickListener {
-                onSongSelected(songResId)
-            }
-        }
-    }
-}*/
