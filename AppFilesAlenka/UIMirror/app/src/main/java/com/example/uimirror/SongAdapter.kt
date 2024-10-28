@@ -33,7 +33,6 @@ class SongAdapter(
         // wandelt XML-Layout in View-Objekte um mit LayoutInflater
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.song_item, parent, false)
-
         return SongViewHolder(view) // gibt SongViewHolder-Instanz zurück
     }
 
@@ -56,11 +55,11 @@ class SongAdapter(
         }
         // Setzt den Click-Listener für das gesamte Item
         holder.itemView.setOnClickListener {
-            onSongSelect(song) // Ruft onSongSelect auf für die Songauswahl
-            onPlayClick(song, holder.playButton)
             selectedPosition = holder.adapterPosition // Aktualisiert die ausgewählte Position
+            onSongSelect(song) // Ruft onSongSelect auf für die Songauswahl
+            //onPlayClick(song, holder.playButton) // spielt song auch ab wenn auf Name geklickt wird
             notifyDataSetChanged() // Aktualisiert die RecyclerView
-        } // Optional Spielt song auch ab, beim klick auf den Song
+        }
     }
 
     // Gibt Anzahl Songs in Liste zurück, die der Adapter verwalten soll.

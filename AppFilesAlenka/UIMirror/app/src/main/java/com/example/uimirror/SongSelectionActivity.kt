@@ -48,30 +48,35 @@ class SongSelectionActivity : AppCompatActivity() {
     }
 
     // Methode zur Verwaltung der Songwiedergabe
+    // Methode zur Verwaltung der Songwiedergabe
     private fun playSongPreview(song: Song, playButton: ImageButton) {
         try {
+            // Wenn ein anderer Song aktuell abgespielt wird, wird dieser pausiert
+            if (currentPlayingSongId != null) {
+                // Den aktuellen Song pausieren, wenn er nicht der neue Song ist
+                mediaPlayer?.pause() // Pausiert den aktuell abgespielten Song, falls vorhanden
+                lastPlayedButton?.setImageResource(android.R.drawable.ic_media_play) // Setzt das Icon des vorherigen Buttons auf Play
+            }
+
             // Überprüft, ob der ausgewählte Song bereits abgespielt wird
             if (currentPlayingSongId == song.resourceId) {
                 mediaPlayer?.let {
-                    // Pausiert oder startet den Song je nach Zustand
+                    // Wenn der aktuelle Song bereits abgespielt wird, dann pausieren oder starten
                     if (it.isPlaying) {
                         it.pause() // Pausiert den Song
                         playButton.setImageResource(android.R.drawable.ic_media_play) // Setzt das Icon auf Play
-                        lastPlayedButton = null // Reset last played button
+                        lastPlayedButton = null // Setzt den zuletzt abgespielten Button zurück
                     } else {
                         it.start() // Startet den Song
                         playButton.setImageResource(android.R.drawable.ic_media_pause) // Setzt das Icon auf Pause
-                        lastPlayedButton?.setImageResource(android.R.drawable.ic_media_play) // Reset previous button to play
-                        lastPlayedButton = playButton // Update last played button
+                        lastPlayedButton?.setImageResource(android.R.drawable.ic_media_play) // Setzt das vorherige Icon auf Play
+                        lastPlayedButton = playButton // Aktualisiert den zuletzt abgespielten Button
                     }
                 }
             } else {
-                // Gibt den vorherigen Song frei, falls ein neuer ausgewählt wird
+                // Gibt den vorherigen MediaPlayer frei, falls ein neuer Song abgespielt wird
                 mediaPlayer?.release() // Gibt den MediaPlayer frei
                 mediaPlayer = null // Setzt die MediaPlayer-Referenz auf null
-
-                // Reset last played button to play if it's not null
-                lastPlayedButton?.setImageResource(android.R.drawable.ic_media_play)
 
                 // Erstellt eine neue MediaPlayer-Instanz für den neuen Song
                 mediaPlayer = MediaPlayer.create(this, song.resourceId)
@@ -80,12 +85,12 @@ class SongSelectionActivity : AppCompatActivity() {
                     mediaPlayer = null // Setzt die MediaPlayer-Referenz auf null
                     currentPlayingSongId = null // Setzt die aktuelle Song-ID zurück
                     playButton.setImageResource(android.R.drawable.ic_media_play) // Setzt das Icon zurück auf Play
-                    lastPlayedButton = null // Reset last played button
+                    lastPlayedButton = null // Setzt den zuletzt abgespielten Button zurück
                 }
                 mediaPlayer?.start() // Startet die Wiedergabe des neuen Songs
-                currentPlayingSongId = song.resourceId // Setzt ID des aktuell abgespielten Songs
+                currentPlayingSongId = song.resourceId // Setzt die ID des aktuell abgespielten Songs
                 playButton.setImageResource(android.R.drawable.ic_media_pause) // Setzt das Icon auf Pause
-                lastPlayedButton = playButton // Update last played button
+                lastPlayedButton = playButton // Aktualisiert den zuletzt abgespielten Button
             }
         } catch (e: Exception) {
             // Fehlerbehandlung bei Problemen mit der Songwiedergabe
@@ -93,6 +98,52 @@ class SongSelectionActivity : AppCompatActivity() {
             Toast.makeText(this, "Fehler beim Abspielen des Songs", Toast.LENGTH_SHORT).show()
         }
     }
+
+    /* private fun playSongPreview(song: Song, playButton: ImageButton) {
+         try {
+             // Überprüft, ob der ausgewählte Song bereits abgespielt wird
+             if (currentPlayingSongId == song.resourceId) {
+                 mediaPlayer?.let {
+                     // Pausiert oder startet den Song je nach Zustand
+                     if (it.isPlaying) {
+                         it.pause() // Pausiert den Song
+                         playButton.setImageResource(android.R.drawable.ic_media_play) // Setzt das Icon auf Play
+                         lastPlayedButton = null // Reset last played button
+                     } else {
+                         it.start() // Startet den Song
+                         playButton.setImageResource(android.R.drawable.ic_media_pause) // Setzt das Icon auf Pause
+                         lastPlayedButton?.setImageResource(android.R.drawable.ic_media_play) // Reset previous button to play
+                         lastPlayedButton = playButton // Update last played button
+                     }
+                 }
+             } else {
+                 // Gibt den vorherigen Song frei, falls ein neuer ausgewählt wird
+                 mediaPlayer?.release() // Gibt den MediaPlayer frei
+                 mediaPlayer = null // Setzt die MediaPlayer-Referenz auf null
+
+                 // Reset last played button to play if it's not null
+                 lastPlayedButton?.setImageResource(android.R.drawable.ic_media_play)
+
+                 // Erstellt eine neue MediaPlayer-Instanz für den neuen Song
+                 mediaPlayer = MediaPlayer.create(this, song.resourceId)
+                 mediaPlayer?.setOnCompletionListener {
+                     it.release() // Gibt den MediaPlayer frei, wenn die Wiedergabe abgeschlossen ist
+                     mediaPlayer = null // Setzt die MediaPlayer-Referenz auf null
+                     currentPlayingSongId = null // Setzt die aktuelle Song-ID zurück
+                     playButton.setImageResource(android.R.drawable.ic_media_play) // Setzt das Icon zurück auf Play
+                     lastPlayedButton = null // Reset last played button
+                 }
+                 mediaPlayer?.start() // Startet die Wiedergabe des neuen Songs
+                 currentPlayingSongId = song.resourceId // Setzt ID des aktuell abgespielten Songs
+                 playButton.setImageResource(android.R.drawable.ic_media_pause) // Setzt das Icon auf Pause
+                 lastPlayedButton = playButton // Update last played button
+             }
+         } catch (e: Exception) {
+             // Fehlerbehandlung bei Problemen mit der Songwiedergabe
+             Log.e("SongSelectionActivity", "Error playing song: ${e.message}")
+             Toast.makeText(this, "Fehler beim Abspielen des Songs", Toast.LENGTH_SHORT).show()
+         }
+     }*/
 
     // Methode zur Speicherung der ausgewählten Song-ID in den SharedPreferences
     private fun saveSongSelection(song: Song) {
@@ -103,12 +154,15 @@ class SongSelectionActivity : AppCompatActivity() {
         }
     }
 
+
+
     // Callback, wenn ein Song ausgewählt wird
     private fun onSongSelected(song: Song) {
         saveSongSelection(song) // Speichert die Auswahl des Songs
         Toast.makeText(this, "Song '${song.name}' ausgewählt", Toast.LENGTH_SHORT).show()
-        //finish() // Kehrt zur MainActivity zurück
+        finish() // Kehrt zur MainActivity zurück
     }
+
 
     // Lebenszyklusmethode, die beim Pausieren der Aktivität aufgerufen wird
     override fun onPause() {
