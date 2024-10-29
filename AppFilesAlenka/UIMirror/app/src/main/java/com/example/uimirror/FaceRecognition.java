@@ -59,9 +59,9 @@ public class FaceRecognition {
 
     // Process the cropped face with OpenFace model
     private static Mat processFace(Net net, Mat faceMat) {
-        Log.d("processFace", "faceMat has this many channels: " + faceMat.channels());
+        //Log.d("processFace", "faceMat has this many channels: " + faceMat.channels());
         Mat inputBlob = Dnn.blobFromImage(faceMat, 1.0 / 255.0, new Size(96, 96), new org.opencv.core.Scalar(0, 0, 0), true, false);
-        Log.d("processFace", "inputBlob has this many channels: " + inputBlob.channels());
+       // Log.d("processFace", "inputBlob has this many channels: " + inputBlob.channels());
         net.setInput(inputBlob);
         return net.forward().clone(); // Clone the result to avoid memory issues
     }
