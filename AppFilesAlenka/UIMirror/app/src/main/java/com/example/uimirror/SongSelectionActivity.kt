@@ -10,9 +10,90 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import android.widget.Button
 
 class SongSelectionActivity : AppCompatActivity() {
-    private  var mediaPlayer: MediaPlayer? = null // Nullable-Variable für den MediaPlayer, um Songs abzuspielen.
+    private lateinit var musicPlayer: MusicPlayer
+    private lateinit var adapter: SongAdapter
+    private var currentPreviewButton: ImageButton? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_song_selection)
+
+        musicPlayer = MusicPlayer(this)
+        setupSongList()
+
+        returnToMainActivity()
+    }
+
+    private fun setupSongList() {
+        val songListView = findViewById<RecyclerView>(R.id.songListView)
+        songListView.layoutManager = LinearLayoutManager(this)
+
+        val songs = listOf(
+            Song("Hey Brother", "Avicii", R.raw.hey_brother),
+            Song("Rescue Me", "OneRepublic", R.raw.rescue_me),
+            Song("Shivers", "Ed Sheeran", R.raw.shivers),
+            Song("Bad Liars", "Imagine Dragons", R.raw.bad_liars)
+        )
+
+        adapter = SongAdapter(
+            songs = songs,
+            onPlayClick = { song, button -> onPlayClick(song, button) },
+            onSongSelect = { song -> onSongSelected(song) }
+        )
+        songListView.adapter = adapter
+    }
+
+    private fun returnToMainActivity() {
+        findViewById<Button>(R.id.backButton).setOnClickListener {
+            finish() // Beendet die SongSelectionActivity und kehrt zur MainActivity zurück
+        }
+    }
+
+    private fun onPlayClick(song: Song, button: ImageButton) {
+        if (button == currentPreviewButton) {
+            musicPlayer.stopPreview()
+            updatePlayButton(button, false)
+            currentPreviewButton = null
+        } else {
+            currentPreviewButton?.let { updatePlayButton(it, false) }
+            musicPlayer.playPreview(song.resourceId)
+            updatePlayButton(button, true)
+            currentPreviewButton = button
+        }
+    }
+
+    private fun updatePlayButton(button: ImageButton, isPlaying: Boolean) {
+        button.setImageResource(
+            if (isPlaying) android.R.drawable.ic_media_pause
+            else android.R.drawable.ic_media_play
+        )
+    }
+
+    private fun onSongSelected(song: Song) {
+        musicPlayer.saveSelectedSongId(song.resourceId)
+        Toast.makeText(this, "Song '${song.name}' ausgewählt", Toast.LENGTH_SHORT).show()
+        finish()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        musicPlayer.stopPreview()
+        currentPreviewButton?.let { updatePlayButton(it, false) }
+        currentPreviewButton = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        musicPlayer.release()
+    }
+}
+
+data class Song(val name: String, val artist: String, val resourceId: Int)
+
+    /*private  var mediaPlayer: MediaPlayer? = null // Nullable-Variable für den MediaPlayer, um Songs abzuspielen.
     private var currentPlayingSongId: Int? = null // Speichert die ID des aktuell abgespielten Songs.
     private var lastPlayedButton: ImageButton? = null // Track the last played button
 
@@ -181,3 +262,4 @@ class SongSelectionActivity : AppCompatActivity() {
 // Datenklasse für die Song-Objekte
 data class Song(val name: String, val artist: String, val resourceId: Int)
 
+*/

@@ -43,11 +43,16 @@ class SongAdapter(
         holder.artistName.text = song.artist // Setzt Text des TextView für Künstlernamen
 
         // Setzt Hintergrund basierend auf der ausgewählten Position
-        if (position == selectedPosition) {
+       /* if (position == selectedPosition) {
             holder.itemView.setBackgroundColor(Color.parseColor("#c9bce7")) // Lila-Farbe
         } else {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT) // Standard-Hintergrund
-        }
+        }*/
+        holder.itemView.setBackgroundColor(
+            if (position == selectedPosition) Color.parseColor("#c9bce7")
+            else Color.TRANSPARENT
+        )
+
 
         // Setzt den Click-Listener für den Play-Button
         holder.playButton.setOnClickListener {
