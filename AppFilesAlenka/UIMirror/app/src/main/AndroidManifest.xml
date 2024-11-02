@@ -4,7 +4,9 @@
     <!-- Messages Permission -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- Camera Permission -->
-    <uses-permission android:name="android.permission.CAMERA" /> <!-- Declares camera feature, not required -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /><!-- Declares camera feature, not required -->
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />

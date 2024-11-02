@@ -4,14 +4,17 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.Environment
 import android.util.Log
+import android.view.Surface
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.ui.geometry.Size
 import androidx.core.content.ContextCompat
 import org.opencv.core.Core
+import org.opencv.core.Core.ROTATE_90_COUNTERCLOCKWISE
 import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.core.MatOfByte
@@ -74,6 +77,7 @@ class CameraManager(private val context: Context, private val previewView: Previ
 
             val imageAnalysis = ImageAnalysis.Builder()
                 .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
+                .setTargetResolution(android.util.Size(1280,720))
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
 
@@ -83,7 +87,7 @@ class CameraManager(private val context: Context, private val previewView: Previ
 
             try {
                 cameraProvider.unbindAll()
-                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
                 cameraProvider.bindToLifecycle(
                     context as androidx.lifecycle.LifecycleOwner,
                     cameraSelector,
@@ -133,22 +137,23 @@ class CameraManager(private val context: Context, private val previewView: Previ
 
         //Log.d("processImageProxy", "bgrMat has this many Channels: " + bgrMat.channels().toString())
 
-        val flippedBGRMat = Mat()
+        val rotatedMat = Mat()
 
         if (bgrMat.empty()) {
             Log.e("CameraManager", "bgrMat is empty, check conversion.")
         } else {
             Log.d("CameraManager", "bgrMat is successfully created.")
-            Core.flip(bgrMat, flippedBGRMat, 0)
+
+            Core.rotate(bgrMat, rotatedMat, ROTATE_90_COUNTERCLOCKWISE)
 
            // Log.d("processImageProxy", "flippedBGRMat has this many Channels: " + flippedBGRMat.channels().toString() )
 
             // Save bgMat to external storage
-           // AssetManager.saveMatToFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath, flippedBGRMat, "debugImage.jpg")
+           AssetManager.saveMatToFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath, rotatedMat, "debugImage.jpg")
         }
 
         // Now pass the BGR Mat to your detection and recognition logic
-        detectAndRecognizeFaces(flippedBGRMat)
+        detectAndRecognizeFaces(rotatedMat)
 
 
         // Close the ImageProxy after processing

@@ -58,6 +58,10 @@ class MainActivity : AppCompatActivity() {
         if(!permissionHandler.isNotificationPermissionGranted()){
             permissionHandler.showPermissionNotificationDeniedDialog()
             }
+        // Request storage permissions if not already granted
+        if (!permissionHandler.isStoragePermissionGranted()) {
+            permissionHandler.requestStoragePermissions()
+        }
     }
 
 

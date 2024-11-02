@@ -27,6 +27,10 @@ class PermissionHandler (private val activity: MainActivity)  { // Mainactivity 
     fun isNotificationPermissionGranted(): Boolean {
         return ContextCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
     }
+    fun isStoragePermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    }
 
     // Anfrage für Kamera-Berechtigung
     fun requestCameraPermissions() {
@@ -37,6 +41,14 @@ class PermissionHandler (private val activity: MainActivity)  { // Mainactivity 
             // Wenn Berechtigungen fehlen, den Benutzer darüber informieren
             Toast.makeText(activity, "Bitte erlauben Sie den Kamerazugriff", Toast.LENGTH_LONG).show()
             ActivityCompat.requestPermissions(activity, REQUIRED_PERMISSIONS, REQUEST_CODE_CAMERA_PERMISSION)
+        }
+    }
+    fun requestStoragePermissions() {
+        if (!isStoragePermissionGranted()) {
+            ActivityCompat.requestPermissions(activity, arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ), REQUEST_CODE_STORAGE_PERMISSION)
         }
     }
 
@@ -55,6 +67,19 @@ class PermissionHandler (private val activity: MainActivity)  { // Mainactivity 
             .setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()
                 requestCameraPermissions() // Fordere Berechtigung an, wenn der Dialog geschlossen wird
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+    // Handle permission rationale for storage
+    fun explainStoragePermissionRationale() {
+        MaterialAlertDialogBuilder(activity)
+            .setTitle("Berechtigung für Speicherzugriff erforderlich")
+            .setMessage("Die App benötigt Zugriff auf den Speicher, um Dateien zu speichern und zu lesen.")
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+                requestStoragePermissions()
             }
             .setCancelable(false)
             .show()
@@ -112,6 +137,13 @@ class PermissionHandler (private val activity: MainActivity)  { // Mainactivity 
             } else if (requestCode == REQUEST_CODE_NOTIFICATION_PERMISSION && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 activity.showNotification("Benachrichtigungen sind aktiviert!")
                 }
+            else if (requestCode == REQUEST_CODE_STORAGE_PERMISSION) {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(activity, "Speicherberechtigungen gewährt", Toast.LENGTH_SHORT).show()
+                } else {
+                    explainStoragePermissionRationale()
+                }
+            }
             else {
                 // Zeige einen Dialog, wenn die Berechtigung verweigert wurde
                 showPermissionCameraDeniedDialog()
@@ -122,7 +154,9 @@ class PermissionHandler (private val activity: MainActivity)  { // Mainactivity 
     companion object {
         const val REQUEST_CODE_NOTIFICATION_PERMISSION = 11
         const val REQUEST_CODE_CAMERA_PERMISSION = 10 // Code für die Berechtigungsanforderung
-        val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA) // Erforderliche Berechtigungen
+        const val REQUEST_CODE_STORAGE_PERMISSION = 12
+        val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE) // Erforderliche Berechtigungen
 
     }
 }
