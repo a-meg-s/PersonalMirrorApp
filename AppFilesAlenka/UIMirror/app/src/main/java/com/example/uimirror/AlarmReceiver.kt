@@ -29,7 +29,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
         // Build and display the notification
         val notification = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.logo_white) // Replace with actual icon if not available
+            .setSmallIcon(R.drawable.logo_white) // Replace with actual icon iff not available
             .setContentTitle("Alarm")
             .setContentText("Der Alarm wurde ausgelöst!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
