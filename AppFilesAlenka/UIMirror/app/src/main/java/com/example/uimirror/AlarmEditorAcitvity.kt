@@ -1,13 +1,21 @@
 package com.example.uimirror
 
+import android.Manifest
 import android.app.AlarmManager
+import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Toast
-import android.widget.TimePicker
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.uimirror.databinding.ActivityAlarmEditorBinding
 import java.util.*
 
@@ -15,6 +23,7 @@ class AlarmEditorActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAlarmEditorBinding
     private lateinit var alarmManager: AlarmManager
+    private val REQUEST_SCHEDULE_EXACT_ALARM = 123 // Unique request code
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,61 +31,106 @@ class AlarmEditorActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        createNotificationChannel()
 
-        // Alarm Einstellen Button
-        binding.setAlarmButton.setOnClickListener { setAlarm() }
+        // Set Alarm Button
+        binding.setAlarmButton.setOnClickListener {
+            if (checkExactAlarmPermission()) {
+                setAlarm()
+            } else {
+                requestExactAlarmPermission()
+            }
+        }
 
-        // Abbrechen Button
+        // Cancel Button
         binding.cancelButton.setOnClickListener { finish() }
     }
 
     private fun setAlarm() {
-        // Hole die Uhrzeit vom TimePicker
-       /* val hour = binding.timePicker.hour
-        val minute = binding.timePicker.minute*/
-        val hour: Int
-        val minute: Int
+        val intent = Intent(applicationContext, AlarmReceiver::class.java)
+        val title = binding.textView.text.toString()
+        val message = "Your alarm is set!"
 
-        // Abwärtskompatibilität: Verwende die ältere Methode, wenn die API kleiner als 23 ist
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            hour = binding.timePicker.hour
-            minute = binding.timePicker.minute
+        val pendingIntent = PendingIntent.getBroadcast(
+            applicationContext,
+            notificationId,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val time = getTime()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // For API level 23 and above, use setExactAndAllowWhileIdle
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                time,
+                pendingIntent
+            )
         } else {
-            hour = binding.timePicker.currentHour
-            minute = binding.timePicker.currentMinute
+            // For API level 21 to 22, use setExact
+            alarmManager.setExact(
+                AlarmManager.RTC_WAKEUP,
+                time,
+                pendingIntent
+            )
         }
 
-        // Stelle den Alarmzeitpunkt ein
+        showAlert(time, title, message)
+    }
+
+    private fun showAlert(time: Long, title: String, message: String) {
+        val timeFormat = android.text.format.DateFormat.getTimeFormat(applicationContext)
+
+        AlertDialog.Builder(this)
+            .setTitle("Notification Scheduled")
+            .setMessage("Title: $title\nMessage: $message\nAt: ${timeFormat.format(Date(time))}")
+            .setPositiveButton("Okay") { _, _ -> }
+            .show()
+    }
+
+    private fun getTime(): Long {
+        val minute = binding.timePicker.minute
+        val hour = binding.timePicker.hour
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, hour)
             set(Calendar.MINUTE, minute)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
-            // Wenn die Zeit bereits vergangen ist, den Alarm für den nächsten Tag einstellen
-            if (timeInMillis < System.currentTimeMillis()) {
-                add(Calendar.DAY_OF_MONTH, 1)
-            }
         }
+        return calendar.timeInMillis
+    }
 
-        // Erstelle einen Intent für die Alarmbenachrichtigung
-        val alarmIntent = Intent(this, AlarmReceiver::class.java)
-        val pendingIntent =
-            PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Alarm Channel"
+            val descriptionText = "Channel for alarm notifications"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(channelId, name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
 
-        // Stelle den Alarm ein
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+    private fun checkExactAlarmPermission(): Boolean {
+        // Use AlarmManager.canScheduleExactAlarms() to check if permission is granted
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            alarmManager.canScheduleExactAlarms()
+        } else {
+            true
+        }
+    }
 
-        Toast.makeText(this, "Alarm für $hour:$minute gesetzt", Toast.LENGTH_SHORT).show()
+    private fun requestExactAlarmPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+            // Redirect to settings if permission is not granted
+            val intent = Intent().apply {
+                action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                data = Uri.parse("package:$packageName")
+            }
+            startActivity(intent)
+        }
     }
 }
-        /*
-        // Erstelle einen Intent für die Alarmbenachrichtigung
-        val alarmIntent = Intent(this, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        // Stelle den Alarm ein
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
-
-        Toast.makeText(this, "Alarm für $hour:$minute gesetzt", Toast.LENGTH_SHORT).show()
-    }
-}*/
