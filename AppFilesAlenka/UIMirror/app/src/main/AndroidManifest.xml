@@ -8,7 +8,7 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
-    <!-- Declares alarm feature,, not required -->
+    <!-- Declares alarm feature, not required -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application

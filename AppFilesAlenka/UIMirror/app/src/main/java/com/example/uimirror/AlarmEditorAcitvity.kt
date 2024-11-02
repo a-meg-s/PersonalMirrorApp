@@ -115,7 +115,7 @@ class AlarmEditorActivity : AppCompatActivity() {
     }
 
     private fun checkExactAlarmPermission(): Boolean {
-        // Use AlarmManager.canScheduleExactAlarms() to check iff permission is granted
+        // Use AlarmManager.canScheduleExactAlarms() to check if permission is granted
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             alarmManager.canScheduleExactAlarms()
         } else {
