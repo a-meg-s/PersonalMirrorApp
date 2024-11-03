@@ -16,11 +16,16 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.coroutineScope
+import com.example.uimirror.database.models.Alarm
+import com.example.uimirror.database.models.Person
 import com.example.uimirror.databinding.ActivityAlarmEditorBinding
+import kotlinx.coroutines.launch
 import java.util.*
 
 class AlarmEditorActivity : AppCompatActivity() {
 
+    private var primaryUser: Person? = null
     private lateinit var binding: ActivityAlarmEditorBinding
     private lateinit var alarmManager: AlarmManager
     private val REQUEST_SCHEDULE_EXACT_ALARM = 123 // Unique request code
@@ -29,6 +34,12 @@ class AlarmEditorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAlarmEditorBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        lifecycle.coroutineScope.launch {
+            primaryUser =
+                UiMirrorApplication.database.personDao().getPrimaryUser(true)
+
+        }
 
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         createNotificationChannel()
@@ -76,6 +87,15 @@ class AlarmEditorActivity : AppCompatActivity() {
             )
         }
 
+
+        //Save the alarm to database
+        primaryUser?.alarm = Alarm(dateTime = time)
+
+        primaryUser?.let {
+            lifecycle.coroutineScope.launch {
+                UiMirrorApplication.database.personDao().insertPerson(it)
+            }
+        }
         showAlert(time, title, message)
     }
 

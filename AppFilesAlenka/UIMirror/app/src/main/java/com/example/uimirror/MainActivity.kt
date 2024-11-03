@@ -22,12 +22,15 @@ import com.google.android.material.snackbar.Snackbar
 import com.example.uimirror.PermissionHandler
 import org.opencv.android.OpenCVLoader
 import android.media.MediaPlayer
-
-
+import androidx.lifecycle.coroutineScope
+import com.example.uimirror.database.models.Music
+import com.example.uimirror.database.models.Person
+import kotlinx.coroutines.launch
 
 
 // MainActivity ist die Hauptklasse der App, die von AppCompatActivity erbt
 class MainActivity : AppCompatActivity() {
+
 
     // Spätere Initialisierung der UI-Binding und Kamera-Executor Variablen
     private lateinit var binding: ActivityMainBinding // UI-Bindings für die Aktivität
@@ -38,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     // Getter-Methoden für den Zugriff im PermissionHandler
     fun getCameraManager(): CameraManager = cameraManager
     fun getBinding(): ActivityMainBinding = binding
+    private lateinit var primaryUser: Person
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,16 +52,16 @@ class MainActivity : AppCompatActivity() {
         initializeOpenCV()
         initializeComponents()
         setupUIListeners()
-
-
-
+        lifecycle.coroutineScope.launch {
+            addPersonsIfNeeded()
+        }
 
         // Berechtigungen beim Start überprüfen
         //requestCameraPermissions()
         //permissionHandler.explainPermissionRationale()
-        if(!permissionHandler.isNotificationPermissionGranted()){
+        if (!permissionHandler.isNotificationPermissionGranted()) {
             permissionHandler.showPermissionNotificationDeniedDialog()
-            }
+        }
         // Request storage permissions if not already granted
         if (!permissionHandler.isStoragePermissionGranted()) {
             permissionHandler.requestStoragePermissions()
@@ -93,8 +97,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-
     private fun setupUIListeners() {
         // Setze den OnClickListener für das Settings-Icon
         binding.settingsIcon?.setOnClickListener {
@@ -115,8 +117,8 @@ class MainActivity : AppCompatActivity() {
         }
         // Setze den OnClickListener für das Kalender-Icon
         binding.calendarIcon?.setOnClickListener {
-                val intent = Intent(this, SongSelectionActivity::class.java)
-                startActivity(intent)
+            val intent = Intent(this, SongSelectionActivity::class.java)
+            startActivity(intent)
 
         }
     }
@@ -139,7 +141,11 @@ class MainActivity : AppCompatActivity() {
         musicPlayer.release()
     }
 
-    override fun onRequestPermissionsResult( requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionHandler.handlePermissionsResult(requestCode, grantResults)
     }
@@ -154,28 +160,86 @@ class MainActivity : AppCompatActivity() {
     fun showNotification(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
-}
 
-    /*private fun requestAndroidCameraPermissions() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.CAMERA),
-                PermissionHandler.REQUEST_CODE_PERMISSIONS
+    private suspend fun addPersonsIfNeeded() {
+        val allPersons = getAllPersons()
+
+
+        if (allPersons.isEmpty()) {
+            val users = listOf(
+                Person(
+                    id = 1,
+                    name = "Alenka",
+                    faceData = listOf(),
+                    musicTracks = listOf(Music(2, 1), Music(3, 2))
+                ),
+                Person(
+                    id = 2,
+                    name = "Maria",
+                    faceData = listOf(),
+                    musicTracks = listOf()
+                ),
+                Person(
+                    id = 3,
+                    name = "Nico",
+                    faceData = listOf(),
+                    musicTracks = listOf()
+                ),
+                Person(
+                    id = 4,
+                    name = "Andrea",
+                    faceData = listOf(),
+                    musicTracks = listOf(Music(1, 2), Music(2, 3))
+                )
             )
+            UiMirrorApplication.database.personDao().insertAll(users)
+            primaryUser = users.first()
+            primaryUser.isPrimaryUser = true
+            //Update ROOM about primary user
+            UiMirrorApplication.database.personDao().insertPerson(primaryUser)
+
         } else {
-            // Berechtigungen immer wieder neu anfragen, auch wenn sie erteilt sind
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.CAMERA),
-                PermissionHandler.REQUEST_CODE_PERMISSIONS
-            )
+            // Change this logic
+            /*
+            * 1. Scan for face in camera using OpenCV
+            * 2. Fetch the user from DB WHERE faceData from OpenCV matches the faceData from DB
+             */
+            primaryUser = UiMirrorApplication.database.personDao().getPrimaryUser(true) ?: allPersons.first()
+            //primaryUser = UiMirrorApplication.database.personDao().getFaceDetectedPerson(listOf()) ?: allPersons.first()
+
         }
     }
+
+    private suspend fun getAllPersons(): List<Person> {
+        val persons = UiMirrorApplication.database.personDao().getAllPersons()
+
+        if (persons.isEmpty()) {
+            Toast.makeText(this, "Inserting Users", Toast.LENGTH_SHORT).show()
+        }
+        return persons
+    }
+}
+
+/*private fun requestAndroidCameraPermissions() {
+    if (ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.CAMERA
+        ) != PackageManager.PERMISSION_GRANTED
+    ) {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.CAMERA),
+            PermissionHandler.REQUEST_CODE_PERMISSIONS
+        )
+    } else {
+        // Berechtigungen immer wieder neu anfragen, auch wenn sie erteilt sind
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.CAMERA),
+            PermissionHandler.REQUEST_CODE_PERMISSIONS
+        )
+    }
+}
 }*/
 /*
     private fun explainPermissionRationale() {
