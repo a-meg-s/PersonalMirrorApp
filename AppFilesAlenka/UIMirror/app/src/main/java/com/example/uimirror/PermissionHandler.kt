@@ -1,21 +1,18 @@
 package com.example.uimirror
 
 import android.Manifest
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.provider.Settings
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import com.example.uimirror.MainActivity
 import androidx.core.app.ActivityCompat
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 // Diese Klasse verwaltet die Berechtigungen, die für den Zugriff auf die Kamera erforderlich sind.
 
-class PermissionHandler (private val activity: MainActivity)  { // Mainactivity wird an PermissionHandler übergeben
+class PermissionHandler(private val activity: Activity)  { // Mainactivity wird an PermissionHandler übergeben
     // Überprüft, ob alle erforderlichen Berechtigungen gewährt wurden. (true wenn ja , false wenn nicht)
    /* fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(activity.baseContext, it) == PackageManager.PERMISSION_GRANTED
@@ -36,7 +33,9 @@ class PermissionHandler (private val activity: MainActivity)  { // Mainactivity 
     fun requestCameraPermissions() {
         if (isCameraPermissionGranted()) {
             // Wenn Berechtigungen bereits erteilt wurden, Kamera starten
-            activity.getCameraManager().startCamera()
+           // activity.getCameraManager().startCamera()
+            (activity as MainActivity).getCameraManager().startCamera()
+
         } else {
             // Wenn Berechtigungen fehlen, den Benutzer darüber informieren
             Toast.makeText(activity, "Bitte erlauben Sie den Kamerazugriff", Toast.LENGTH_LONG).show()
@@ -133,9 +132,11 @@ class PermissionHandler (private val activity: MainActivity)  { // Mainactivity 
         if (requestCode == REQUEST_CODE_CAMERA_PERMISSION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Kamera starten, wenn die Berechtigung erteilt wurde
-                activity.getCameraManager().startCamera()
+                //activity.getCameraManager().startCamera()
+                (activity as MainActivity).getCameraManager().startCamera()
             } else if (requestCode == REQUEST_CODE_NOTIFICATION_PERMISSION && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                activity.showNotification("Benachrichtigungen sind aktiviert!")
+               // activity.showNotification("Benachrichtigungen sind aktiviert!")
+                (activity as MainActivity).showNotification("Benachrichtigungen sind aktiviert!")
                 }
             else if (requestCode == REQUEST_CODE_STORAGE_PERMISSION) {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

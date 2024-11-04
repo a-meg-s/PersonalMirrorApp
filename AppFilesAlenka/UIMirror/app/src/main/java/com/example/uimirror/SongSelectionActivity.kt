@@ -1,8 +1,6 @@
 package com.example.uimirror
 
 //Importiert
-import android.content.Context
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageButton
@@ -17,6 +15,9 @@ class SongSelectionActivity : AppCompatActivity() {
     private lateinit var adapter: SongAdapter
     private var currentPreviewButton: ImageButton? = null
 
+    private lateinit var cameraManager: CameraManager // Hinzufügen der Kamera-Manager Instanz
+    private lateinit var permissionHandler: PermissionHandler // Instanz von PermissionHandler
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_song_selection)
@@ -24,11 +25,24 @@ class SongSelectionActivity : AppCompatActivity() {
         musicPlayer = MusicPlayer(this)
         setupSongList()
 
+        // Inizialisiert Kamera und Permissionhandler (damit Preview funktioniert)
+        cameraManager = CameraManager(this, findViewById(R.id.previewView)) // Initialisiere CameraManager mit PreviewView
+        permissionHandler = PermissionHandler(this) // Initialisiere den PermissionHandler hier
+
+
         returnToMainActivity()
         deactivateMainSong()
-        
+
+        // Starte die Kamera, wenn die Berechtigung gewährt ist
+        if (permissionHandler.isCameraPermissionGranted()) {
+            cameraManager.startCamera()
+        } else {
+            permissionHandler.showPermissionCameraDeniedDialog()
+        }
 
     }
+
+
 
     private fun setupSongList() {
         val songListView = findViewById<RecyclerView>(R.id.songListView)

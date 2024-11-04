@@ -1,29 +1,13 @@
 package com.example.uimirror
 
 // importierte Packete für die Funktion der App
-import android.Manifest
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import android.provider.Settings
-import androidx.appcompat.app.AlertDialog
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.example.uimirror.CameraManager
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.example.uimirror.databinding.ActivityMainBinding
-import com.google.android.material.snackbar.Snackbar
-import com.example.uimirror.PermissionHandler
 import org.opencv.android.OpenCVLoader
-import android.media.MediaPlayer
-
-
 
 
 // MainActivity ist die Hauptklasse der App, die von AppCompatActivity erbt
