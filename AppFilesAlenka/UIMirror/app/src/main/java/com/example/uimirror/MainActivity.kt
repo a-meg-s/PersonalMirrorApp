@@ -134,10 +134,16 @@ class MainActivity : AppCompatActivity() {
             // Berechtigungen fehlen, Dialog anzeigen
             permissionHandler.showPermissionCameraDeniedDialog()
         }
-       // musicPlayer.playMainSong()// Überprüfen und abspielen des ausgewählten Songs bei rückkehr zur Activity
-        if (musicPlayer.isMusicEnabled()) {
-            musicPlayer.playMainSong()
-        }
+        // Überprüfen und abspielen des ausgewählten Songs bei rückkehr zur Activity
+       if(!musicPlayer.isMainPlaying()) {
+           Log.e("MainActivity", "Music is playing");
+           if(musicPlayer.isMusicEnabled()){
+               Log.e("MainActivity", "Music is enabled");
+               musicPlayer.playMainSong()
+           }
+       } else{
+           Log.e("MainActivity", "Music not playing");
+       }
     }
 
     override fun onPause() {
