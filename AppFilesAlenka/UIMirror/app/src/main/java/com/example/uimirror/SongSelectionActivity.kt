@@ -51,12 +51,6 @@ class SongSelectionActivity : AppCompatActivity() {
 
     private fun returnToMainActivity() {
         findViewById<Button>(R.id.backButton).setOnClickListener {
-
-            // soll Songabspielen vor dem zurückkehren
-            /* if (musicPlayer.isMusicEnabled()) {
-                musicPlayer.playMainSong()
-            }*/
-            // musicPlayer.playMainSong()// Überprüfen und abspielen des ausgewählten Songs bei rückkehr zur Activity
             finish() // Beendet die SongSelectionActivity und kehrt zur MainActivity zurück
         }
     }
@@ -80,7 +74,6 @@ class SongSelectionActivity : AppCompatActivity() {
                 Log.d("SongSelectionActivity", "deactivateMainSong: Deactivate Main Song button clicked")
             } else {
                 musicPlayer.setMusicEnabled(true) // Musik als aktiviert markieren
-                //musicPlayer.playMainSong() // Musik abspielen
                 deactivateButton.text = "Song deaktivieren" // Button-Text ändern
                 Toast.makeText(this, "Hauptmusik aktiviert", Toast.LENGTH_SHORT).show()
             }
@@ -110,10 +103,6 @@ class SongSelectionActivity : AppCompatActivity() {
     private fun onSongSelected(song: Song) {
         musicPlayer.saveSelectedSongId(song.resourceId)
         Toast.makeText(this, "Song '${song.name}' ausgewählt", Toast.LENGTH_SHORT).show()
-        // soll Songabspielen vor dem zurückkehren
-       /* if (musicPlayer.isMusicEnabled()) {
-            musicPlayer.playMainSong()
-        }*/
         finish() // kehrt zur Main zurück
     }
 
