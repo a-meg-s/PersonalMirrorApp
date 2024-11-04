@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "com.example.uimirror.app-mergeDebugResources-65:/layout/activity_alarm_editor.xml",
+        "source": "com.example.uimirror.app-main-68:/layout/activity_alarm_editor.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-mergeDebugResources-65:/layout/song_item.xml",
+        "source": "com.example.uimirror.app-main-68:/layout/song_item.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-mergeDebugResources-65:/layout/activity_song_selection.xml",
+        "source": "com.example.uimirror.app-main-68:/layout/activity_song_selection.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-mergeDebugResources-65:/layout/activity_greeting.xml",
+        "source": "com.example.uimirror.app-main-68:/layout/activity_greeting.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-mergeDebugResources-65:/layout/activity_main.xml",
+        "source": "com.example.uimirror.app-main-68:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-mergeDebugResources-65:/layout/activity_login.xml",
+        "source": "com.example.uimirror.app-main-68:/layout/activity_login.xml"
+    }
+]

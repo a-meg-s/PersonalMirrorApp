@@ -1,0 +1,4 @@
+/Users/rohittp/Library/Android/sdk/cmake/3.22.1/bin/ninja \
+  -C \
+  /Users/rohittp/Downloads/spiegelapp-blanktemplate-main/AppFilesAlenka/UIMirror/opencv/.cxx/Debug/41kn1z11/arm64-v8a \
+  opencv_jni_shared

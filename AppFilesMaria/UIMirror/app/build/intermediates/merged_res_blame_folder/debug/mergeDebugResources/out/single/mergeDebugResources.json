@@ -1,0 +1,122 @@
+[
+    {
+        "merged": "com.example.uimirror.app-debug-66:/layout_song_item.xml.flat",
+        "source": "com.example.uimirror.app-main-68:/layout/song_item.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/raw_hey_brother.mp3.flat",
+        "source": "com.example.uimirror.app-main-68:/raw/hey_brother.mp3"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/xml_data_extraction_rules.xml.flat",
+        "source": "com.example.uimirror.app-main-68:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/layout_activity_greeting.xml.flat",
+        "source": "com.example.uimirror.app-main-68:/layout/activity_greeting.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/raw_shivers.mp3.flat",
+        "source": "com.example.uimirror.app-main-68:/raw/shivers.mp3"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/drawable-anydpi-v24_ic_launcher_foreground.xml.flat",
+        "source": "com.example.uimirror.app-pngs-62:/drawable-anydpi-v24/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.example.uimirror.app-main-68:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.uimirror.app-main-68:/mipmap-xhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/layout_activity_song_selection.xml.flat",
+        "source": "com.example.uimirror.app-main-68:/layout/activity_song_selection.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.uimirror.app-main-68:/mipmap-xxxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "com.example.uimirror.app-main-68:/mipmap-hdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.example.uimirror.app-main-68:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.uimirror.app-main-68:/mipmap-hdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.example.uimirror.app-main-68:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/navigation_nav_graph.xml.flat",
+        "source": "com.example.uimirror.app-main-68:/navigation/nav_graph.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.uimirror.app-main-68:/mipmap-mdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/raw_bad_liars.mp3.flat",
+        "source": "com.example.uimirror.app-main-68:/raw/bad_liars.mp3"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/xml_backup_rules.xml.flat",
+        "source": "com.example.uimirror.app-main-68:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "com.example.uimirror.app-main-68:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/layout_activity_alarm_editor.xml.flat",
+        "source": "com.example.uimirror.app-main-68:/layout/activity_alarm_editor.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/drawable_logo_white.png.flat",
+        "source": "com.example.uimirror.app-main-68:/drawable/logo_white.png"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/layout_activity_login.xml.flat",
+        "source": "com.example.uimirror.app-main-68:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.uimirror.app-main-68:/mipmap-xxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/menu_menu_main.xml.flat",
+        "source": "com.example.uimirror.app-main-68:/menu/menu_main.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "com.example.uimirror.app-main-68:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/layout_activity_main.xml.flat",
+        "source": "com.example.uimirror.app-main-68:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/raw_rescue_me.mp3.flat",
+        "source": "com.example.uimirror.app-main-68:/raw/rescue_me.mp3"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "com.example.uimirror.app-main-68:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "com.example.uimirror.app-main-68:/mipmap-mdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.uimirror.app-debug-66:/layout-land_activity_main.xml.flat",
+        "source": "com.example.uimirror.app-main-68:/layout-land/activity_main.xml"
+    }
+]
