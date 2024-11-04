@@ -34,16 +34,16 @@
 
                 <!-- Icon 4 calendar (unten rechts) -->
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/calendarIcon"
+                    android:id="@+id/playIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="100dp"
                     android:alpha="0.9"
-                    android:contentDescription="Kalender"
+                    android:contentDescription="SongSelection"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintBottom_toTopOf="@+id/alarmIcon"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:srcCompat="@android:drawable/ic_menu_my_calendar" />
+                    app:srcCompat="@android:drawable/ic_media_play" />
 
 
                 <!-- Icon 3 alarm (unten rechts) -->
@@ -76,11 +76,11 @@
 
                 <!-- Icon 1 settings (unter Icon 2) -->
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/playIcon"
+                    android:id="@+id/settingsIconIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:alpha="0.9"
-                    android:contentDescription="playlist"
+                    android:contentDescription="Something"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:srcCompat="@android:drawable/ic_menu_manage" />

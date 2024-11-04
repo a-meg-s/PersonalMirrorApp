@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
 
         }
         // Setze den OnClickListener für das Kalender-Icon
-        binding.calendarIcon?.setOnClickListener {
+        binding.playIcon?.setOnClickListener {
                 musicPlayer.pauseMainSong()
                 val intent = Intent(this, SongSelectionActivity::class.java)
                 startActivity(intent)
