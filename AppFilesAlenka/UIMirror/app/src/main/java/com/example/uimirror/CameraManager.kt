@@ -87,7 +87,8 @@ class CameraManager(private val context: Context, private val previewView: Previ
 
             try {
                 cameraProvider.unbindAll()
-                val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+                // KAMERA UMSTELLEN BEI TABLET (FRONT)/ EMULATOR (BACK)
+                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
                 cameraProvider.bindToLifecycle(
                     context as androidx.lifecycle.LifecycleOwner,
                     cameraSelector,

@@ -7,17 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-        <!-- Camera Preview -->
-        <!--   <ImageView
-        android:id="@+id/preview_placeholder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription=""
-        android:src="" />-->
-
-
-        <!--Container für die Icons-->
-
 
         <androidx.camera.view.PreviewView
             android:id="@+id/previewView"
@@ -29,10 +18,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0">
-
-
         </androidx.camera.view.PreviewView>
 
+        <!--Container für die Icons-->
         <LinearLayout
             android:id="@+id/iconContainer"
             android:layout_width="wrap_content"

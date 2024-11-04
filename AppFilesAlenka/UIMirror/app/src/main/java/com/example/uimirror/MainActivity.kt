@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity() {
 
         // Berechtigungen beim Start überprüfen
         //requestCameraPermissions()
-        //permissionHandler.explainPermissionRationale()
         if(!permissionHandler.isNotificationPermissionGranted()){
             permissionHandler.showPermissionNotificationDeniedDialog()
             }
@@ -96,8 +95,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-
     private fun setupUIListeners() {
         // Setze den OnClickListener für das Settings-Icon
         binding.settingsIcon?.setOnClickListener {
@@ -134,6 +131,7 @@ class MainActivity : AppCompatActivity() {
             // Berechtigungen fehlen, Dialog anzeigen
             permissionHandler.showPermissionCameraDeniedDialog()
         }
+
         // Überprüfen und abspielen des ausgewählten Songs bei rückkehr zur Activity
        if(!musicPlayer.isMainPlaying()) {
            Log.e("MainActivity", "Music is playing");
@@ -169,143 +167,3 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-    /*private fun requestAndroidCameraPermissions() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.CAMERA),
-                PermissionHandler.REQUEST_CODE_PERMISSIONS
-            )
-        } else {
-            // Berechtigungen immer wieder neu anfragen, auch wenn sie erteilt sind
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.CAMERA),
-                PermissionHandler.REQUEST_CODE_PERMISSIONS
-            )
-        }
-    }
-}*/
-/*
-    private fun explainPermissionRationale() {
-        // Zeige zuerst eine Erklärung, warum die Berechtigung benötigt wird
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle("Berechtigung erforderlich")
-        builder.setMessage("Die Anwendung benötigt die Kameraberechtigung, um die Mirror- und Gesichtserkennung-Funktionalität zu ermöglichen. Ohne diese Berechtigung funktioniert die App nicht vollständig.")
-        builder.setPositiveButton("OK") { dialog, _ ->
-            dialog.dismiss()
-            // Fordere die Berechtigung nach der Erklärung an
-            requestCameraPermissions()
-        }
-        builder.setCancelable(false)
-        builder.show()
-    }
-
-    private fun requestCameraPermissions() {
-        // Überprüfen, ob Berechtigungen erteilt wurden
-        if (permissionHandler.allPermissionsGranted()) {
-            cameraManager.startCamera() // Starte die Kamera, wenn die Berechtigung erteilt wurde
-        } else {
-            // Fordert Berechtigungen an
-            //ActivityCompat.requestPermissions(this, PermissionHandler.REQUIRED_PERMISSIONS, PermissionHandler.REQUEST_CODE_PERMISSIONS)
-           // Toast.makeText(this, "Bitte erlauben Sie der App den Zugriff auf die Kamera in der nächsten Anfrage.", Toast.LENGTH_SHORT).show() // Kurze Meldung anzeigen
-            Snackbar.make(binding.root, "Bitte erlauben Sie den Kamerazugriff", Snackbar.LENGTH_INDEFINITE)
-                .setAction("OK") {
-                    ActivityCompat.requestPermissions(this, PermissionHandler.REQUIRED_PERMISSIONS, PermissionHandler.REQUEST_CODE_PERMISSIONS)
-                }
-                .show()
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PermissionHandler.REQUEST_CODE_PERMISSIONS) {
-            // Überprüfen, ob die Berechtigung erteilt wurde
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                cameraManager.startCamera() // Starte die Kamera, wenn die Berechtigung erteilt wurde
-            } else {
-                // Kurze Meldung, wenn die Berechtigung abgelehnt wurde
-                showPermissionDeniedDialog()
-                Toast.makeText(this, "Kamerazugriff verweigert. Bitte aktivieren Sie ihn in den Einstellungen.", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun openAppSettings() {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-            data = android.net.Uri.fromParts("package", packageName, null)
-        }
-        startActivity(intent)
-    }
-
-    private fun showPermissionDeniedDialog() {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle("Berechtigung verweigert")
-        builder.setMessage("Die Applikation benötigt die Kameraberechtigung. Bitte erteilen Sie die Berechtigung manuell in den Einstellungen.")
-        builder.setPositiveButton("Zu den Einstellungen") { dialog, _ ->
-            dialog.dismiss()
-            openAppSettings()
-        }
-        builder.setNegativeButton("Abbrechen") { dialog, _ ->
-            dialog.dismiss()
-            finish() // App schließen oder eine Einschränkung anzeigen
-        }
-        builder.setCancelable(false)
-        builder.show()
-    }
-
-    /*
-    // Starte die Berechtigungsprüfung
-    if (permissionHandler.allPermissionsGranted()) {
-        cameraManager.startCamera() //startet die Kamera, wenn die Berechtigungen erteilt sind
-    } else { // Fordert Berechtigungen an
-        ActivityCompat.requestPermissions(this, PermissionHandler.REQUIRED_PERMISSIONS, PermissionHandler.REQUEST_CODE_PERMISSIONS)
-    }
-
-    // Benachrichtigungsberechtigung anfordern
-   /* if (!permissionHandler.isNotificationPermissionGranted()) {
-        permissionHandler.requestNotificationPermission()
-    }*/
-
-    // Setze den OnClickListener für das Alarm-Icon
-    binding.alarmIcon?.setOnClickListener {
-        val intent = Intent(this, AlarmEditorActivity::class.java)
-        startActivity(intent) // Startet die Alarm-Editor-Aktivität
-    }
-}
-
-    override fun onResume() {
-        super.onResume()
-        if (permissionHandler.allPermissionsGranted()) {
-            cameraManager.startCamera() // Startet die Kamera bei der Wiederaufnahme, wenn Berechtigungen gewährt sind
-        } else {
-            permissionHandler.showPermissionDeniedDialog() // Zeigt den Dialog an, wenn die Berechtigungen verweigert wurden
-        }
-    }
-    // Verarbeitet die Antwort auf die Berechtigungsanfrage
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PermissionHandler.REQUEST_CODE_PERMISSIONS) {
-            if (permissionHandler.allPermissionsGranted()) {
-                cameraManager.startCamera() // Startet die Kamera, wenn die Berechtigungen erteilt wurden
-            } else {
-                permissionHandler.showPermissionDeniedDialog() // Zeigt den Dialog an, wenn die Berechtigungen verweigert wurden
-            }
-        }
-    } */
-    override fun onResume() {
-        super.onResume()
-        // Überprüfen, ob die Berechtigungen erteilt wurden, um die Kamera zu starten
-        if (permissionHandler.allPermissionsGranted()) {
-            cameraManager.startCamera()
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        cameraManager.shutdown() // Stoppt die Kamera, wenn die Aktivität zerstört wird
-    }*/
