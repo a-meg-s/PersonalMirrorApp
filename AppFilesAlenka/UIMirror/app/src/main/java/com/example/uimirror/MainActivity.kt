@@ -89,7 +89,10 @@ class MainActivity : AppCompatActivity() {
             // Erklären warum Berechtigung benötigt
             permissionHandler.showPermissionCameraDeniedDialog()
         }
-        musicPlayer.playMainSong()
+        //musicPlayer.playMainSong()
+        if (musicPlayer.isMusicEnabled()) {
+            musicPlayer.playMainSong()
+        }
     }
 
 
@@ -115,6 +118,7 @@ class MainActivity : AppCompatActivity() {
         }
         // Setze den OnClickListener für das Kalender-Icon
         binding.calendarIcon?.setOnClickListener {
+                musicPlayer.pauseMainSong()
                 val intent = Intent(this, SongSelectionActivity::class.java)
                 startActivity(intent)
 
@@ -130,13 +134,16 @@ class MainActivity : AppCompatActivity() {
             // Berechtigungen fehlen, Dialog anzeigen
             permissionHandler.showPermissionCameraDeniedDialog()
         }
-        musicPlayer.playMainSong()// Überprüfen und abspielen des ausgewählten Songs beim Wiederaufnehmen
-
+       // musicPlayer.playMainSong()// Überprüfen und abspielen des ausgewählten Songs bei rückkehr zur Activity
+        if (musicPlayer.isMusicEnabled()) {
+            musicPlayer.playMainSong()
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        musicPlayer.release()
+      //  musicPlayer.pauseMainSong()
+      //  musicPlayer.release()
     }
 
     override fun onRequestPermissionsResult( requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

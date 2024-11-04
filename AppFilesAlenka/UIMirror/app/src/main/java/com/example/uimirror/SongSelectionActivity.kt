@@ -25,6 +25,9 @@ class SongSelectionActivity : AppCompatActivity() {
         setupSongList()
 
         returnToMainActivity()
+        deactivateMainSong()
+        
+
     }
 
     private fun setupSongList() {
@@ -49,6 +52,32 @@ class SongSelectionActivity : AppCompatActivity() {
     private fun returnToMainActivity() {
         findViewById<Button>(R.id.backButton).setOnClickListener {
             finish() // Beendet die SongSelectionActivity und kehrt zur MainActivity zurück
+        }
+    }
+
+    // In SongSelectionActivity
+    private fun deactivateMainSong() {
+       val deactivateButton =  findViewById<Button>(R.id.deactivateMainSongButton)
+       if(musicPlayer.isMusicEnabled()){
+           deactivateButton.text = "Song deaktivieren" // Button-Text ändern
+       } else{
+           deactivateButton.text = "Song aktivieren" // Button-Text ändern
+       }
+
+           deactivateButton.setOnClickListener {
+            // Überprüfen, ob Musik gerade läuft
+            if (musicPlayer.isMusicEnabled()) {
+                musicPlayer.pauseMainSong() // Musik pausieren
+                musicPlayer.setMusicEnabled(false) // Musik als deaktiviert markieren
+                deactivateButton.text = "Song aktivieren" // Button-Text ändern
+                Toast.makeText(this, "Hauptmusik deaktiviert", Toast.LENGTH_SHORT).show()
+                Log.d("SongSelectionActivity", "deactivateMainSong: Deactivate Main Song button clicked")
+            } else {
+                musicPlayer.setMusicEnabled(true) // Musik als aktiviert markieren
+                //musicPlayer.playMainSong() // Musik abspielen
+                deactivateButton.text = "Song deaktivieren" // Button-Text ändern
+                Toast.makeText(this, "Hauptmusik aktiviert", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

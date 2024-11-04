@@ -19,15 +19,16 @@ class MusicPlayer(private val context: Context) {
     private var currentMainSongId: Int? = null
     private var currentPosition: Int = 0
     // Status, ob der Hauptsong gerade abgespielt wird
-    private var isMainPlaying = false
+    private var isMainPlaying: Boolean = false
     // Flag, um zu überprüfen, ob der Hauptsong vor der Vorschau abgespielt wurde
-    private var wasMainPlayingBeforePreview = false
+    private var wasMainPlayingBeforePreview: Boolean = false
     // Handler für das Ausführen von Aufgaben im Hauptthread (z.B. um den Vorschau-Song nach 10 Sekunden zu stoppen)
     private val handler = Handler(Looper.getMainLooper())
 
     // Speichert die ID des ausgewählten Songs in SharedPreferences
     fun saveSelectedSongId(songId: Int) {
         sharedPref.edit().putInt("selectedSongId", songId).apply() // Speichern der Song-ID
+        sharedPref.edit().putInt("song_position", 0).apply()
     }
 
     // Lädt die ID des zuletzt ausgewählten Songs aus SharedPreferences
@@ -38,14 +39,13 @@ class MusicPlayer(private val context: Context) {
 
     // Spielt den Hauptsong basierend auf der gespeicherten Song-ID
     fun playMainSong() {
-        loadSelectedSongId()?.let { playSong(it, isPreview = false) }
-    }
-
-    fun toggleMainPlayback(songId: Int) {
-        when {
-            currentMainSongId == songId && isMainPlaying -> pauseMainSong()
-            currentMainSongId == songId && !isMainPlaying -> resumeMainSong()
-            else -> playSong(songId, isPreview = false)
+        val newSongId = loadSelectedSongId() // Lädt den aktuell gespeicherten Song aus SharedPreferences
+        if (newSongId != null && newSongId != currentMainSongId) {
+            mainPlayer?.release() // Wenn ein neuer Song geladen wird, vorherigen Player loslassen
+            currentMainSongId = newSongId
+            playSong(newSongId, isPreview = false) // Startet den neuen Hauptsong
+        } else if (newSongId != null) {
+            resumeMainSong() // Falls der Song derselbe ist, wird die Wiedergabe fortgesetzt
         }
     }
 
@@ -106,12 +106,13 @@ class MusicPlayer(private val context: Context) {
         }
     }
 
-    private fun pauseMainSong() {
+    fun pauseMainSong() {
         mainPlayer?.let {
             currentPosition = it.currentPosition // Fortschritt speichern
+            Log.d("MusicPlayer", "Aktuelle Position: $currentPosition") // Protokolliere die aktuelle Position
             sharedPref.edit().putInt("song_position", currentPosition).apply() // Fortschritt in SharedPreferences speichern
             it.pause()
-        }
+        } ?: Log.d("MusicPlayer", "pauseMainSong: Main player is null or not playing")
       //  mainPlayer?.pause()
         isMainPlaying = false
     }
@@ -121,6 +122,17 @@ class MusicPlayer(private val context: Context) {
         mainPlayer?.seekTo(currentPosition) // Setzt den Song an der gespeicherten Position fort
         mainPlayer?.start()
         isMainPlaying = true
+    }
+
+    // Speichert, ob die Musik aktiviert ist
+    fun setMusicEnabled(enabled: Boolean) {
+        sharedPref.edit().putBoolean("music_enabled", enabled).apply()
+    }
+
+    // Lädt den Musikstatus (aktiviert oder deaktiviert) aus SharedPreferences
+    fun isMusicEnabled(): Boolean {
+        Log.d("MusicPlayer", "Music Enabled:")
+        return sharedPref.getBoolean("music_enabled", true) // Standardmäßig aktiviert
     }
 
     fun release() {
