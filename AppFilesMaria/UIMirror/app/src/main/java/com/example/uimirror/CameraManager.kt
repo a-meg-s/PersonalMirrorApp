@@ -13,6 +13,11 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.ui.geometry.Size
 import androidx.core.content.ContextCompat
+import com.example.uimirror.database.PersonDao
+import com.example.uimirror.database.models.Person
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.opencv.core.Core
 import org.opencv.core.Core.ROTATE_90_COUNTERCLOCKWISE
 import org.opencv.core.CvType
@@ -31,10 +36,13 @@ import kotlin.math.log
 
 // This class manages the camera and its preview
 class CameraManager(private val context: Context, private val previewView: PreviewView?) {
-
+    private var cachedUserFaces: List<Mat>? = null
+    private var cachedUserNames: List<String>? = null
     init {
         // Ensure the models are loaded at initialization
         loadModels(context)
+        cachedUserFaces = cacheUserFaces()
+        cachedUserNames = cacheUserNames()
     }
 
     companion object {
@@ -55,6 +63,7 @@ class CameraManager(private val context: Context, private val previewView: Previ
                 )
                 Log.d("CameraManager", "Init: OpenFace model loaded.")
             }
+            /*
             if (assetPhoto == null) {
                 assetPhoto = AssetManager.loadImageFromAssets(context, "Nico.jpg")
                 Log.d("CameraManager", "Init: Image from Assets loaded.")
@@ -62,6 +71,8 @@ class CameraManager(private val context: Context, private val previewView: Previ
                 assetFaces = FaceDetection.detectAndCropFaceOpenCV(assetPhoto, faceDetector)
                 Log.d("CameraManager", "Init: Faces from Assets detected.")
             }
+
+             */
         }
 
     }
@@ -149,7 +160,7 @@ class CameraManager(private val context: Context, private val previewView: Previ
            // Log.d("processImageProxy", "flippedBGRMat has this many Channels: " + flippedBGRMat.channels().toString() )
 
             // Save bgMat to external storage
-           AssetManager.saveMatToFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath, rotatedMat, "debugImage.jpg")
+           // AssetManager.saveMatToFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath, rotatedMat, "debugImage.jpg")
         }
 
         // Now pass the BGR Mat to your detection and recognition logic
@@ -169,7 +180,7 @@ class CameraManager(private val context: Context, private val previewView: Previ
 
             FaceRecognition.compareDetectedFaces(
                 detectedFacesCamera,
-                assetFaces,
+                cachedUserFaces,
                 faceRecognitionNet
             )
 
@@ -177,12 +188,34 @@ class CameraManager(private val context: Context, private val previewView: Previ
             Log.e("CameraManager", "Face detector or recognition model is not loaded.")
         }
     }
+    private fun cacheUserFaces(): List<Mat> {
+        val faceList = mutableListOf<Mat>()
+        CoroutineScope(Dispatchers.IO).launch {
+            val allUsers = UiMirrorApplication.database.personDao().getAllPersons()
 
-    private fun ByteBuffer.toByteArray(): ByteArray {
-        rewind()
-        val byteArray = ByteArray(remaining())
-        get(byteArray)
-        return byteArray
+            Log.d("CameraManager", "Cached ${allUsers.size} users from database.")
+
+            faceList.addAll(allUsers.mapNotNull { user ->
+                byteArrayToMat(user.faceData)
+            })
+
+            Log.d("CameraManager", "Collected faceData for ${faceList.size} users for Face extraction.")
+        }
+        return faceList
+    }
+    private fun cacheUserNames(): List<String> {
+        val nameList = mutableListOf<String>()
+        CoroutineScope(Dispatchers.IO).launch {
+            val allUsers = UiMirrorApplication.database.personDao().getAllPersons()
+            Log.d("CameraManager", "Cached ${allUsers.size} users from database for Name extraction.")
+
+            nameList.addAll(allUsers.mapNotNull { user ->
+                user.name
+            })
+
+            Log.d("CameraManager", "Collected faceData for ${nameList.size} users.")
+        }
+        return nameList
     }
 
 

@@ -1,2 +1,2 @@
-ninja: Entering directory `C:\Users\nicog\AndroidStudioProjects\IIP-Repository\spiegelapp-blanktemplate\AppFilesAlenka\UIMirror\opencv\.cxx\Debug\41kn1z11\armeabi-v7a'
+ninja: Entering directory `C:\Users\nicog\AndroidStudioProjects\IIP-Repository\spiegelapp-blanktemplate\AppFilesMaria\UIMirror\opencv\.cxx\Debug\41kn1z11\armeabi-v7a'
 ninja: no work to do.

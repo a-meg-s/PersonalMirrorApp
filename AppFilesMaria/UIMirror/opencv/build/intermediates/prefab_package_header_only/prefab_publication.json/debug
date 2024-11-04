@@ -1,5 +1,5 @@
 {
-  "installationFolder": "/Users/rohittp/Downloads/spiegelapp-blanktemplate-main/AppFilesAlenka/UIMirror/opencv/build/intermediates/prefab_package/debug/prefab",
+  "installationFolder": "C:\\Users\\nicog\\AndroidStudioProjects\\IIP-Repository\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\build\\intermediates\\prefab_package\\debug\\prefab",
   "gradlePath": ":opencv",
   "packageInfo": {
     "packageName": "opencv",
@@ -8,7 +8,7 @@
     "modules": [
       {
         "moduleName": "opencv_jni_shared",
-        "moduleHeaders": "/Users/rohittp/Downloads/spiegelapp-blanktemplate-main/AppFilesAlenka/UIMirror/opencv/native/jni/include",
+        "moduleHeaders": "C:\\Users\\nicog\\AndroidStudioProjects\\IIP-Repository\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\native\\jni\\include",
         "moduleExportLibraries": [],
         "abis": []
       }

@@ -49,12 +49,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        initializeOpenCV()
-        initializeComponents()
-        setupUIListeners()
         lifecycle.coroutineScope.launch {
             addPersonsIfNeeded()
         }
+        initializeOpenCV()
+        initializeComponents()
+        setupUIListeners()
+
 
         // Berechtigungen beim Start überprüfen
         //requestCameraPermissions()
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeComponents() {
         // Initialisiere die Klassen für Kamera und Berechtigungen
-        cameraManager = CameraManager(this, binding.previewView)
+        cameraManager = CameraManager(this, binding.previewView, )
         permissionHandler = PermissionHandler(this)
         musicPlayer = MusicPlayer(this) // Musikplayer initialisieren
 
@@ -166,29 +167,30 @@ class MainActivity : AppCompatActivity() {
 
 
         if (allPersons.isEmpty()) {
+            Log.d("addPersonsIfNeeded", "Users added")
             val users = listOf(
                 Person(
                     id = 1,
                     name = "Alenka",
-                    faceData = listOf(),
+                    faceData = matToByteArray(FaceDetection.detectAndCropFaceOpenCV(AssetManager.loadImageFromAssets(this, "Nico.jpg"), AssetManager.loadCascade(this, "haarcascade_frontalface_alt.xml")).get(0)) ,
                     musicTracks = listOf(Music(2, 1), Music(3, 2))
                 ),
                 Person(
                     id = 2,
                     name = "Maria",
-                    faceData = listOf(),
+                    faceData = matToByteArray(FaceDetection.detectAndCropFaceOpenCV(AssetManager.loadImageFromAssets(this, "Nico.jpg"), AssetManager.loadCascade(this, "haarcascade_frontalface_alt.xml")).get(0)) ,
                     musicTracks = listOf()
                 ),
                 Person(
                     id = 3,
                     name = "Nico",
-                    faceData = listOf(),
+                    faceData = matToByteArray(FaceDetection.detectAndCropFaceOpenCV(AssetManager.loadImageFromAssets(this, "Nico.jpg"), AssetManager.loadCascade(this, "haarcascade_frontalface_alt.xml")).get(0)) ,
                     musicTracks = listOf()
                 ),
                 Person(
                     id = 4,
                     name = "Andrea",
-                    faceData = listOf(),
+                    faceData = matToByteArray(FaceDetection.detectAndCropFaceOpenCV(AssetManager.loadImageFromAssets(this, "Nico.jpg"), AssetManager.loadCascade(this, "haarcascade_frontalface_alt.xml")).get(0)) ,
                     musicTracks = listOf(Music(1, 2), Music(2, 3))
                 )
             )
@@ -197,6 +199,9 @@ class MainActivity : AppCompatActivity() {
             primaryUser.isPrimaryUser = true
             //Update ROOM about primary user
             UiMirrorApplication.database.personDao().insertPerson(primaryUser)
+
+            val insertedUsers = UiMirrorApplication.database.personDao().getAllPersons()
+            Log.d("DatabaseCheck", "Number of persons in DB: ${insertedUsers.size}")
 
         } else {
             // Change this logic
@@ -210,7 +215,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun getAllPersons(): List<Person> {
+     suspend fun getAllPersons(): List<Person> {
         val persons = UiMirrorApplication.database.personDao().getAllPersons()
 
         if (persons.isEmpty()) {

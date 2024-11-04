@@ -4,7 +4,7 @@
             "outputFile": "com.example.uimirror.app-mergeDebugResources-64:/values-h720dp-v13/values-h720dp-v13.xml",
             "map": [
                 {
-                    "source": "/Users/rohittp/.gradle/caches/transforms-4/3c9d794fb47ff6b6705b0a3cec0c3626/transformed/appcompat-1.6.1/res/values-h720dp-v13/values-h720dp-v13.xml",
+                    "source": "C:\\Users\\nicog\\.gradle\\caches\\transforms-4\\3c9d794fb47ff6b6705b0a3cec0c3626\\transformed\\appcompat-1.6.1\\res\\values-h720dp-v13\\values-h720dp-v13.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

@@ -4,7 +4,7 @@
             "outputFile": "com.example.uimirror.app-mergeDebugResources-64:/values-h550dp-port-v13/values-h550dp-port-v13.xml",
             "map": [
                 {
-                    "source": "/Users/rohittp/.gradle/caches/transforms-4/d9684ccd1beed5d15d1cd8f1c8ef4211/transformed/material-1.10.0/res/values-h550dp-port-v13/values-h550dp-port-v13.xml",
+                    "source": "C:\\Users\\nicog\\.gradle\\caches\\transforms-4\\d9684ccd1beed5d15d1cd8f1c8ef4211\\transformed\\material-1.10.0\\res\\values-h550dp-port-v13\\values-h550dp-port-v13.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

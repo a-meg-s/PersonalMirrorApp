@@ -8,6 +8,7 @@ import androidx.room.CoroutinesRoom;
 import androidx.room.EntityInsertionAdapter;
 import androidx.room.RoomDatabase;
 import androidx.room.RoomSQLiteQuery;
+import androidx.room.SharedSQLiteStatement;
 import androidx.room.util.CursorUtil;
 import androidx.room.util.DBUtil;
 import androidx.sqlite.db.SupportSQLiteStatement;
@@ -42,11 +43,13 @@ public final class PersonDao_Impl implements PersonDao {
 
   private final EntityInsertionAdapter<Person> __insertionAdapterOfPerson;
 
-  private final ByteTypeConverter __byteTypeConverter = new ByteTypeConverter();
-
   private final SingleAlarmTypeConverter __singleAlarmTypeConverter = new SingleAlarmTypeConverter();
 
   private final MusicTypeConverter __musicTypeConverter = new MusicTypeConverter();
+
+  private final SharedSQLiteStatement __preparedStmtOfDeleteAllPersons;
+
+  private final ByteTypeConverter __byteTypeConverter = new ByteTypeConverter();
 
   public PersonDao_Impl(@NonNull final RoomDatabase __db) {
     this.__db = __db;
@@ -62,31 +65,38 @@ public final class PersonDao_Impl implements PersonDao {
           @NonNull final Person entity) {
         statement.bindLong(1, entity.getId());
         statement.bindString(2, entity.getName());
-        final byte[] _tmp = __byteTypeConverter.fromListByte(entity.getFaceData());
-        statement.bindBlob(3, _tmp);
-        final String _tmp_1;
+        statement.bindBlob(3, entity.getFaceData());
+        final String _tmp;
         if (entity.getAlarm() == null) {
-          _tmp_1 = null;
+          _tmp = null;
         } else {
-          _tmp_1 = __singleAlarmTypeConverter.fromAlarm(entity.getAlarm());
+          _tmp = __singleAlarmTypeConverter.fromAlarm(entity.getAlarm());
         }
-        if (_tmp_1 == null) {
+        if (_tmp == null) {
           statement.bindNull(4);
         } else {
-          statement.bindString(4, _tmp_1);
+          statement.bindString(4, _tmp);
         }
-        final String _tmp_2 = __musicTypeConverter.fromMusicList(entity.getMusicTracks());
-        if (_tmp_2 == null) {
+        final String _tmp_1 = __musicTypeConverter.fromMusicList(entity.getMusicTracks());
+        if (_tmp_1 == null) {
           statement.bindNull(5);
         } else {
-          statement.bindString(5, _tmp_2);
+          statement.bindString(5, _tmp_1);
         }
-        final Integer _tmp_3 = entity.isPrimaryUser() == null ? null : (entity.isPrimaryUser() ? 1 : 0);
-        if (_tmp_3 == null) {
+        final Integer _tmp_2 = entity.isPrimaryUser() == null ? null : (entity.isPrimaryUser() ? 1 : 0);
+        if (_tmp_2 == null) {
           statement.bindNull(6);
         } else {
-          statement.bindLong(6, _tmp_3);
+          statement.bindLong(6, _tmp_2);
         }
+      }
+    };
+    this.__preparedStmtOfDeleteAllPersons = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "DELETE FROM Person";
+        return _query;
       }
     };
   }
@@ -128,6 +138,29 @@ public final class PersonDao_Impl implements PersonDao {
   }
 
   @Override
+  public Object deleteAllPersons(final Continuation<? super Unit> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+      @Override
+      @NonNull
+      public Unit call() throws Exception {
+        final SupportSQLiteStatement _stmt = __preparedStmtOfDeleteAllPersons.acquire();
+        try {
+          __db.beginTransaction();
+          try {
+            _stmt.executeUpdateDelete();
+            __db.setTransactionSuccessful();
+            return Unit.INSTANCE;
+          } finally {
+            __db.endTransaction();
+          }
+        } finally {
+          __preparedStmtOfDeleteAllPersons.release(_stmt);
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
   public Object getPerson(final long id, final Continuation<? super Person> $completion) {
     final String _sql = "SELECT * FROM Person WHERE id = ?";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
@@ -152,43 +185,41 @@ public final class PersonDao_Impl implements PersonDao {
             _tmpId = _cursor.getInt(_cursorIndexOfId);
             final String _tmpName;
             _tmpName = _cursor.getString(_cursorIndexOfName);
-            final List<Byte> _tmpFaceData;
-            final byte[] _tmp;
-            _tmp = _cursor.getBlob(_cursorIndexOfFaceData);
-            _tmpFaceData = __byteTypeConverter.toListByte(_tmp);
+            final byte[] _tmpFaceData;
+            _tmpFaceData = _cursor.getBlob(_cursorIndexOfFaceData);
             final Alarm _tmpAlarm;
-            final String _tmp_1;
+            final String _tmp;
             if (_cursor.isNull(_cursorIndexOfAlarm)) {
-              _tmp_1 = null;
+              _tmp = null;
             } else {
-              _tmp_1 = _cursor.getString(_cursorIndexOfAlarm);
+              _tmp = _cursor.getString(_cursorIndexOfAlarm);
             }
-            if (_tmp_1 == null) {
+            if (_tmp == null) {
               _tmpAlarm = null;
             } else {
-              _tmpAlarm = __singleAlarmTypeConverter.toAlarm(_tmp_1);
+              _tmpAlarm = __singleAlarmTypeConverter.toAlarm(_tmp);
             }
             final List<Music> _tmpMusicTracks;
-            final String _tmp_2;
+            final String _tmp_1;
             if (_cursor.isNull(_cursorIndexOfMusicTracks)) {
-              _tmp_2 = null;
+              _tmp_1 = null;
             } else {
-              _tmp_2 = _cursor.getString(_cursorIndexOfMusicTracks);
+              _tmp_1 = _cursor.getString(_cursorIndexOfMusicTracks);
             }
-            final List<Music> _tmp_3 = __musicTypeConverter.toMusicList(_tmp_2);
-            if (_tmp_3 == null) {
+            final List<Music> _tmp_2 = __musicTypeConverter.toMusicList(_tmp_1);
+            if (_tmp_2 == null) {
               throw new IllegalStateException("Expected NON-NULL 'java.util.List<com.example.uimirror.database.models.Music>', but it was NULL.");
             } else {
-              _tmpMusicTracks = _tmp_3;
+              _tmpMusicTracks = _tmp_2;
             }
             final Boolean _tmpIsPrimaryUser;
-            final Integer _tmp_4;
+            final Integer _tmp_3;
             if (_cursor.isNull(_cursorIndexOfIsPrimaryUser)) {
-              _tmp_4 = null;
+              _tmp_3 = null;
             } else {
-              _tmp_4 = _cursor.getInt(_cursorIndexOfIsPrimaryUser);
+              _tmp_3 = _cursor.getInt(_cursorIndexOfIsPrimaryUser);
             }
-            _tmpIsPrimaryUser = _tmp_4 == null ? null : _tmp_4 != 0;
+            _tmpIsPrimaryUser = _tmp_3 == null ? null : _tmp_3 != 0;
             _result = new Person(_tmpId,_tmpName,_tmpFaceData,_tmpAlarm,_tmpMusicTracks,_tmpIsPrimaryUser);
           } else {
             _result = null;
@@ -229,43 +260,41 @@ public final class PersonDao_Impl implements PersonDao {
             _tmpId = _cursor.getInt(_cursorIndexOfId);
             final String _tmpName;
             _tmpName = _cursor.getString(_cursorIndexOfName);
-            final List<Byte> _tmpFaceData;
-            final byte[] _tmp_1;
-            _tmp_1 = _cursor.getBlob(_cursorIndexOfFaceData);
-            _tmpFaceData = __byteTypeConverter.toListByte(_tmp_1);
+            final byte[] _tmpFaceData;
+            _tmpFaceData = _cursor.getBlob(_cursorIndexOfFaceData);
             final Alarm _tmpAlarm;
-            final String _tmp_2;
+            final String _tmp_1;
             if (_cursor.isNull(_cursorIndexOfAlarm)) {
-              _tmp_2 = null;
+              _tmp_1 = null;
             } else {
-              _tmp_2 = _cursor.getString(_cursorIndexOfAlarm);
+              _tmp_1 = _cursor.getString(_cursorIndexOfAlarm);
             }
-            if (_tmp_2 == null) {
+            if (_tmp_1 == null) {
               _tmpAlarm = null;
             } else {
-              _tmpAlarm = __singleAlarmTypeConverter.toAlarm(_tmp_2);
+              _tmpAlarm = __singleAlarmTypeConverter.toAlarm(_tmp_1);
             }
             final List<Music> _tmpMusicTracks;
-            final String _tmp_3;
+            final String _tmp_2;
             if (_cursor.isNull(_cursorIndexOfMusicTracks)) {
-              _tmp_3 = null;
+              _tmp_2 = null;
             } else {
-              _tmp_3 = _cursor.getString(_cursorIndexOfMusicTracks);
+              _tmp_2 = _cursor.getString(_cursorIndexOfMusicTracks);
             }
-            final List<Music> _tmp_4 = __musicTypeConverter.toMusicList(_tmp_3);
-            if (_tmp_4 == null) {
+            final List<Music> _tmp_3 = __musicTypeConverter.toMusicList(_tmp_2);
+            if (_tmp_3 == null) {
               throw new IllegalStateException("Expected NON-NULL 'java.util.List<com.example.uimirror.database.models.Music>', but it was NULL.");
             } else {
-              _tmpMusicTracks = _tmp_4;
+              _tmpMusicTracks = _tmp_3;
             }
             final Boolean _tmpIsPrimaryUser;
-            final Integer _tmp_5;
+            final Integer _tmp_4;
             if (_cursor.isNull(_cursorIndexOfIsPrimaryUser)) {
-              _tmp_5 = null;
+              _tmp_4 = null;
             } else {
-              _tmp_5 = _cursor.getInt(_cursorIndexOfIsPrimaryUser);
+              _tmp_4 = _cursor.getInt(_cursorIndexOfIsPrimaryUser);
             }
-            _tmpIsPrimaryUser = _tmp_5 == null ? null : _tmp_5 != 0;
+            _tmpIsPrimaryUser = _tmp_4 == null ? null : _tmp_4 != 0;
             _result = new Person(_tmpId,_tmpName,_tmpFaceData,_tmpAlarm,_tmpMusicTracks,_tmpIsPrimaryUser);
           } else {
             _result = null;
@@ -306,43 +335,41 @@ public final class PersonDao_Impl implements PersonDao {
             _tmpId = _cursor.getInt(_cursorIndexOfId);
             final String _tmpName;
             _tmpName = _cursor.getString(_cursorIndexOfName);
-            final List<Byte> _tmpFaceData;
-            final byte[] _tmp_1;
-            _tmp_1 = _cursor.getBlob(_cursorIndexOfFaceData);
-            _tmpFaceData = __byteTypeConverter.toListByte(_tmp_1);
+            final byte[] _tmpFaceData;
+            _tmpFaceData = _cursor.getBlob(_cursorIndexOfFaceData);
             final Alarm _tmpAlarm;
-            final String _tmp_2;
+            final String _tmp_1;
             if (_cursor.isNull(_cursorIndexOfAlarm)) {
-              _tmp_2 = null;
+              _tmp_1 = null;
             } else {
-              _tmp_2 = _cursor.getString(_cursorIndexOfAlarm);
+              _tmp_1 = _cursor.getString(_cursorIndexOfAlarm);
             }
-            if (_tmp_2 == null) {
+            if (_tmp_1 == null) {
               _tmpAlarm = null;
             } else {
-              _tmpAlarm = __singleAlarmTypeConverter.toAlarm(_tmp_2);
+              _tmpAlarm = __singleAlarmTypeConverter.toAlarm(_tmp_1);
             }
             final List<Music> _tmpMusicTracks;
-            final String _tmp_3;
+            final String _tmp_2;
             if (_cursor.isNull(_cursorIndexOfMusicTracks)) {
-              _tmp_3 = null;
+              _tmp_2 = null;
             } else {
-              _tmp_3 = _cursor.getString(_cursorIndexOfMusicTracks);
+              _tmp_2 = _cursor.getString(_cursorIndexOfMusicTracks);
             }
-            final List<Music> _tmp_4 = __musicTypeConverter.toMusicList(_tmp_3);
-            if (_tmp_4 == null) {
+            final List<Music> _tmp_3 = __musicTypeConverter.toMusicList(_tmp_2);
+            if (_tmp_3 == null) {
               throw new IllegalStateException("Expected NON-NULL 'java.util.List<com.example.uimirror.database.models.Music>', but it was NULL.");
             } else {
-              _tmpMusicTracks = _tmp_4;
+              _tmpMusicTracks = _tmp_3;
             }
             final Boolean _tmpIsPrimaryUser;
-            final Integer _tmp_5;
+            final Integer _tmp_4;
             if (_cursor.isNull(_cursorIndexOfIsPrimaryUser)) {
-              _tmp_5 = null;
+              _tmp_4 = null;
             } else {
-              _tmp_5 = _cursor.getInt(_cursorIndexOfIsPrimaryUser);
+              _tmp_4 = _cursor.getInt(_cursorIndexOfIsPrimaryUser);
             }
-            _tmpIsPrimaryUser = _tmp_5 == null ? null : _tmp_5 != 0;
+            _tmpIsPrimaryUser = _tmp_4 == null ? null : _tmp_4 != 0;
             _result = new Person(_tmpId,_tmpName,_tmpFaceData,_tmpAlarm,_tmpMusicTracks,_tmpIsPrimaryUser);
           } else {
             _result = null;
@@ -380,43 +407,41 @@ public final class PersonDao_Impl implements PersonDao {
             _tmpId = _cursor.getInt(_cursorIndexOfId);
             final String _tmpName;
             _tmpName = _cursor.getString(_cursorIndexOfName);
-            final List<Byte> _tmpFaceData;
-            final byte[] _tmp;
-            _tmp = _cursor.getBlob(_cursorIndexOfFaceData);
-            _tmpFaceData = __byteTypeConverter.toListByte(_tmp);
+            final byte[] _tmpFaceData;
+            _tmpFaceData = _cursor.getBlob(_cursorIndexOfFaceData);
             final Alarm _tmpAlarm;
-            final String _tmp_1;
+            final String _tmp;
             if (_cursor.isNull(_cursorIndexOfAlarm)) {
-              _tmp_1 = null;
+              _tmp = null;
             } else {
-              _tmp_1 = _cursor.getString(_cursorIndexOfAlarm);
+              _tmp = _cursor.getString(_cursorIndexOfAlarm);
             }
-            if (_tmp_1 == null) {
+            if (_tmp == null) {
               _tmpAlarm = null;
             } else {
-              _tmpAlarm = __singleAlarmTypeConverter.toAlarm(_tmp_1);
+              _tmpAlarm = __singleAlarmTypeConverter.toAlarm(_tmp);
             }
             final List<Music> _tmpMusicTracks;
-            final String _tmp_2;
+            final String _tmp_1;
             if (_cursor.isNull(_cursorIndexOfMusicTracks)) {
-              _tmp_2 = null;
+              _tmp_1 = null;
             } else {
-              _tmp_2 = _cursor.getString(_cursorIndexOfMusicTracks);
+              _tmp_1 = _cursor.getString(_cursorIndexOfMusicTracks);
             }
-            final List<Music> _tmp_3 = __musicTypeConverter.toMusicList(_tmp_2);
-            if (_tmp_3 == null) {
+            final List<Music> _tmp_2 = __musicTypeConverter.toMusicList(_tmp_1);
+            if (_tmp_2 == null) {
               throw new IllegalStateException("Expected NON-NULL 'java.util.List<com.example.uimirror.database.models.Music>', but it was NULL.");
             } else {
-              _tmpMusicTracks = _tmp_3;
+              _tmpMusicTracks = _tmp_2;
             }
             final Boolean _tmpIsPrimaryUser;
-            final Integer _tmp_4;
+            final Integer _tmp_3;
             if (_cursor.isNull(_cursorIndexOfIsPrimaryUser)) {
-              _tmp_4 = null;
+              _tmp_3 = null;
             } else {
-              _tmp_4 = _cursor.getInt(_cursorIndexOfIsPrimaryUser);
+              _tmp_3 = _cursor.getInt(_cursorIndexOfIsPrimaryUser);
             }
-            _tmpIsPrimaryUser = _tmp_4 == null ? null : _tmp_4 != 0;
+            _tmpIsPrimaryUser = _tmp_3 == null ? null : _tmp_3 != 0;
             _item = new Person(_tmpId,_tmpName,_tmpFaceData,_tmpAlarm,_tmpMusicTracks,_tmpIsPrimaryUser);
             _result.add(_item);
           }

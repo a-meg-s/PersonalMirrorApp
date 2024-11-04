@@ -4,7 +4,7 @@
             "outputFile": "com.example.uimirror.app-mergeDebugResources-64:/values-large-v4/values-large-v4.xml",
             "map": [
                 {
-                    "source": "/Users/rohittp/.gradle/caches/transforms-4/d9684ccd1beed5d15d1cd8f1c8ef4211/transformed/material-1.10.0/res/values-large-v4/values-large-v4.xml",
+                    "source": "C:\\Users\\nicog\\.gradle\\caches\\transforms-4\\d9684ccd1beed5d15d1cd8f1c8ef4211\\transformed\\material-1.10.0\\res\\values-large-v4\\values-large-v4.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",
@@ -21,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "/Users/rohittp/.gradle/caches/transforms-4/3c9d794fb47ff6b6705b0a3cec0c3626/transformed/appcompat-1.6.1/res/values-large-v4/values-large-v4.xml",
+                    "source": "C:\\Users\\nicog\\.gradle\\caches\\transforms-4\\3c9d794fb47ff6b6705b0a3cec0c3626\\transformed\\appcompat-1.6.1\\res\\values-large-v4\\values-large-v4.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10",
                         "startColumns": "4,4,4,4,4,4,4,4,4",
