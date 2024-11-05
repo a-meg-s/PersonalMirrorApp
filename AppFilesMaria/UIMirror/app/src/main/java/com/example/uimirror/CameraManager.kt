@@ -181,6 +181,7 @@ class CameraManager(private val context: Context, private val previewView: Previ
             FaceRecognition.compareDetectedFaces(
                 detectedFacesCamera,
                 cachedUserFaces,
+                cachedUserNames,
                 faceRecognitionNet
             )
 

@@ -22,7 +22,7 @@ import java.util.List;
 public class FaceRecognition {
 
     // Method to compare two sets of detected faces
-    public static int compareDetectedFaces(List<Mat> detectedFacesCamera, List<Mat> detectedFacesDatabase, Net torchAlgorithm) {
+    public static int compareDetectedFaces(List<Mat> detectedFacesCamera, List<Mat> detectedFacesDatabase, List<String> namesDatabase, Net torchAlgorithm) {
         Log.d("compareDetectedFaces", "Number of detected faces in camera: " + detectedFacesCamera.size());
         Log.d("compareDetectedFaces", "Number of detected faces in database: " + detectedFacesDatabase.size());
         double dist = 0;
@@ -34,12 +34,12 @@ public class FaceRecognition {
                 dist = compareFaces(torchAlgorithm, face1, face2);
 
                 if (dist < 0.6) {
-                    Log.d("FaceRecognition", "Compared Face " + (i + 1) + " of Image1 to Face " + (j + 1) + " of Image2. Distance: " + dist + " - Same Face.");
+                    Log.d("FaceRecognition", "Compared Face " + (i + 1) + " of Camera to Face " + (namesDatabase.get(j)) + " of Database. Distance: " + dist + " - Same Face.");
                     return j;
                 } else if (dist < 0.9) {
-                    Log.d("FaceRecognition", "Compared Face " + (i + 1) + " of Image1 to Face " + (j + 1) + " of Image2. Distance: " + dist + " - Different Face.");
+                    Log.d("FaceRecognition", "Compared Face " + (i + 1) + " of Camera to Face " + (namesDatabase.get(j)) + " of Database. Distance: " + dist + " - Different Face.");
                 } else {
-                    Log.d("FaceRecognition", "Compared Face " + (i + 1) + " of Image1 to Face " + (j + 1) + " of Image2. Distance: " + dist + " - Invalid comparison (likely not a face).");
+                    Log.d("FaceRecognition", "Compared Face " + (i + 1) + " of Camera to Face " + (namesDatabase.get(j)) + " of Database. Distance: " + dist + " - Invalid comparison (likely not a face).");
                 }
             }
         }

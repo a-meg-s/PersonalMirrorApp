@@ -1,4 +1,4 @@
-#Mon Nov 04 20:34:04 CET 2024
+#Tue Nov 05 16:00:35 CET 2024
 base.0=C\:\\Users\\nicog\\AndroidStudioProjects\\IIP-Repository\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
 base.1=C\:\\Users\\nicog\\AndroidStudioProjects\\IIP-Repository\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\app\\build\\intermediates\\dex\\debug\\mergeLibDexDebug\\10\\classes.dex
 base.10=C\:\\Users\\nicog\\AndroidStudioProjects\\IIP-Repository\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\1\\classes.dex

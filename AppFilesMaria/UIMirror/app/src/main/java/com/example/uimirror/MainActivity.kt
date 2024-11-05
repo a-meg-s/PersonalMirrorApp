@@ -22,6 +22,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.example.uimirror.PermissionHandler
 import org.opencv.android.OpenCVLoader
 import android.media.MediaPlayer
+import android.os.Environment
 import androidx.lifecycle.coroutineScope
 import com.example.uimirror.database.models.Music
 import com.example.uimirror.database.models.Person
@@ -50,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         lifecycle.coroutineScope.launch {
+            //UiMirrorApplication.database.personDao().deleteAllPersons()
             addPersonsIfNeeded()
         }
         initializeOpenCV()
@@ -172,25 +174,25 @@ class MainActivity : AppCompatActivity() {
                 Person(
                     id = 1,
                     name = "Alenka",
-                    faceData = matToByteArray(FaceDetection.detectAndCropFaceOpenCV(AssetManager.loadImageFromAssets(this, "Nico.jpg"), AssetManager.loadCascade(this, "haarcascade_frontalface_alt.xml")).get(0)) ,
+                    faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Alenka_Face.jpg")) ,
                     musicTracks = listOf(Music(2, 1), Music(3, 2))
                 ),
                 Person(
                     id = 2,
                     name = "Maria",
-                    faceData = matToByteArray(FaceDetection.detectAndCropFaceOpenCV(AssetManager.loadImageFromAssets(this, "Nico.jpg"), AssetManager.loadCascade(this, "haarcascade_frontalface_alt.xml")).get(0)) ,
+                    faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Maria_Face.jpg")) ,
                     musicTracks = listOf()
                 ),
                 Person(
                     id = 3,
                     name = "Nico",
-                    faceData = matToByteArray(FaceDetection.detectAndCropFaceOpenCV(AssetManager.loadImageFromAssets(this, "Nico.jpg"), AssetManager.loadCascade(this, "haarcascade_frontalface_alt.xml")).get(0)) ,
+                    faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Nico_Face.jpg")) ,
                     musicTracks = listOf()
                 ),
                 Person(
                     id = 4,
                     name = "Andrea",
-                    faceData = matToByteArray(FaceDetection.detectAndCropFaceOpenCV(AssetManager.loadImageFromAssets(this, "Nico.jpg"), AssetManager.loadCascade(this, "haarcascade_frontalface_alt.xml")).get(0)) ,
+                    faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Andrea_Face.jpg")) ,
                     musicTracks = listOf(Music(1, 2), Music(2, 3))
                 )
             )
