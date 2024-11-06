@@ -35,6 +35,7 @@ public class FaceRecognition {
 
                 if (dist < 0.6) {
                     Log.d("FaceRecognition", "Compared Face " + (i + 1) + " of Camera to Face " + (namesDatabase.get(j)) + " of Database. Distance: " + dist + " - Same Face.");
+                    Log.d("FaceRecognition", "User found" + (namesDatabase.get(j)));
                     return j;
                 } else if (dist < 0.9) {
                     Log.d("FaceRecognition", "Compared Face " + (i + 1) + " of Camera to Face " + (namesDatabase.get(j)) + " of Database. Distance: " + dist + " - Different Face.");
