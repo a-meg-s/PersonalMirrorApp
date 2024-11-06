@@ -17,10 +17,13 @@ class PermissionHandler(private val activity: Activity)  { // Mainactivity wird 
    /* fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(activity.baseContext, it) == PackageManager.PERMISSION_GRANTED
     }*/
+
+    // Überprüft, ob die Kamera-Berechtigung in den App-Einstellungen gewährt ist
     fun isCameraPermissionGranted(): Boolean {
         return ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
     }
 
+    // Überprüft, ob die Benachrichtigungs-Berechtigung gewährt ist
     fun isNotificationPermissionGranted(): Boolean {
         return ContextCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
     }
@@ -29,7 +32,7 @@ class PermissionHandler(private val activity: Activity)  { // Mainactivity wird 
                 ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
-    // Anfrage für Kamera-Berechtigung
+    // Fordert die Kamera-Berechtigung an oder startet die Kamera, wenn die Berechtigung bereits vorhanden ist
     fun requestCameraPermissions() {
         if (isCameraPermissionGranted()) {
             // Wenn Berechtigungen bereits erteilt wurden, Kamera starten
@@ -37,7 +40,7 @@ class PermissionHandler(private val activity: Activity)  { // Mainactivity wird 
             (activity as MainActivity).getCameraManager().startCamera()
 
         } else {
-            // Wenn Berechtigungen fehlen, den Benutzer darüber informieren
+            // Wenn Berechtigungen fehlen -> Zeigt eine Meldung an und fordert die Berechtigung an
             Toast.makeText(activity, "Bitte erlauben Sie den Kamerazugriff", Toast.LENGTH_LONG).show()
             ActivityCompat.requestPermissions(activity, REQUIRED_PERMISSIONS, REQUEST_CODE_CAMERA_PERMISSION)
         }
@@ -51,24 +54,11 @@ class PermissionHandler(private val activity: Activity)  { // Mainactivity wird 
         }
     }
 
+    // Fordert die Benachrichtigungs-Berechtigung an
     fun requestNotificationPermission() {
         if (!isNotificationPermissionGranted()) {
             ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_CODE_NOTIFICATION_PERMISSION)
         }
-    }
-
-
-    // Zeige eine Erklärung, warum die Berechtigung benötigt wird
-    fun explainPermissionRationale() {
-        MaterialAlertDialogBuilder(activity)
-            .setTitle("Berechtigung erforderlich")
-            .setMessage("Die Anwendung benötigt die Kameraberechtigung, um die Mirror- und Gesichtserkennung-Funktionalität zu ermöglichen. Ohne diese Berechtigung funktioniert die App nicht vollständig.")
-            .setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-                requestCameraPermissions() // Fordere Berechtigung an, wenn der Dialog geschlossen wird
-            }
-            .setCancelable(false)
-            .show()
     }
 
     // Handle permission rationale for storage
@@ -84,7 +74,7 @@ class PermissionHandler(private val activity: Activity)  { // Mainactivity wird 
             .show()
     }
 
-    // Dialog anzeigen, wenn die Berechtigung verweigert wurde
+    // Zeigt einen Dialog an, wenn die Kamera-Berechtigung verweigert wurde und öffnet die Einstellungen
     fun showPermissionCameraDeniedDialog() {
 
         MaterialAlertDialogBuilder(activity)
@@ -92,11 +82,18 @@ class PermissionHandler(private val activity: Activity)  { // Mainactivity wird 
             .setMessage("Um diese Funktion zu nutzen, benötigt die App Zugriff auf die Kamera. Bitte aktivieren Sie die Berechtigung in den Einstellungen.")
             .setPositiveButton("Zu den Einstellungen") { dialog, _ ->
                 dialog.dismiss()
-                openAppSettings()
+                openAppSettings() // Öffnet die App-Einstellungen für manuelle Berechtigungserteilung
             }
             .setNegativeButton("Abbrechen") { dialog, _ ->
                 dialog.dismiss()
-                Toast.makeText(activity, "Kamerazugriff verweigert. Die Funktion ist eingeschränkt.", Toast.LENGTH_SHORT).show()
+                // Zeigt Meldung an wenn beim Abbruch Kamerazugriff nicht gewährt ist...
+                if(!isCameraPermissionGranted()) {
+                    Toast.makeText(
+                        activity,
+                        "Kamerazugriff verweigert. Die Funktion ist eingeschränkt.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
             .setCancelable(false)
             .show()

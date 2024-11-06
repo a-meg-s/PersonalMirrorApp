@@ -83,7 +83,9 @@ class MainActivity : AppCompatActivity() {
         // Setze den OnClickListener für das Settings-Icon
         binding.settingsIcon?.setOnClickListener {
             // Zeigt den Dialog an, um zur App-Einstellungsseite weiterzuleiten
-            permissionHandler.showPermissionCameraDeniedDialog()
+            //permissionHandler.showPermissionCameraDeniedDialog()
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
         }
 
         // Setze den OnClickListener für das Alarm-Icon
@@ -134,6 +136,7 @@ class MainActivity : AppCompatActivity() {
       //  musicPlayer.release()
     }
 
+    // wird von Android autom. aufgerufen, enn Berechtigungsanfrage bearbeitet wurde.
     override fun onRequestPermissionsResult( requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionHandler.handlePermissionsResult(requestCode, grantResults)

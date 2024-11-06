@@ -8,13 +8,24 @@ import com.example.uimirror.databinding.ActivityGreetingBinding
 class GreetingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityGreetingBinding
+  //  private lateinit var cameraManager: CameraManager // Kamera-Manager Instanz
+  //  private lateinit var permissionHandler: PermissionHandler // PermissionHandler Instanz
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Data Binding-Instanz für das Layout "login_view" erstellen
-        binding = ActivityGreetingBinding.inflate(layoutInflater)
-        // Setze den Inhalt der Activity auf die root-View des Bindings
-        setContentView(binding.root)
+        binding = ActivityGreetingBinding.inflate(layoutInflater) // Data Binding-Instanz für das Layout "login_view" erstellen
+        setContentView(binding.root) // Setze den Inhalt der Activity auf die root-View des Bindings
+
+/*
+        cameraManager = CameraManager(this, binding.previewView) // Initialisiere den Kamera-Manager direkt mit `binding.previewView`
+        permissionHandler = PermissionHandler(this) // Initialisiere den PermissionHandler für die Berechtigungsprüfung
+
+        // Starte die Kamera, wenn die Berechtigung gewährt ist
+        if (permissionHandler.isCameraPermissionGranted()) {
+            cameraManager.startCamera()
+        } else {
+            permissionHandler.showPermissionCameraDeniedDialog()
+        }*/
 
         //Beispiel text mit Name (später holen von Datenbank nach erkennung...)
         val recognizedName = "Alenka"
