@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -57,6 +58,8 @@ dependencies {
     implementation(project(":opencv"))
     implementation(libs.androidx.exifinterface)
     implementation(libs.androidx.room.ktx)
+    ksp(libs.androidxRoomCompiler)
+    implementation(libs.gson)
     implementation(libs.androidx.activity)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

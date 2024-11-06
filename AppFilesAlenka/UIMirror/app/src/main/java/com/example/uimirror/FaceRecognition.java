@@ -22,26 +22,30 @@ import java.util.List;
 public class FaceRecognition {
 
     // Method to compare two sets of detected faces
-    public static double compareDetectedFaces(List<Mat> detectedFaces1, List<Mat> detectedFaces2, Net torchAlgorithm) {
+    public static double compareDetectedFaces(List<Mat> detectedFacesCamera, List<Mat> detectedFacesDatabase, List<String> namesDatabase, Net torchAlgorithm) {
+        Log.d("compareDetectedFaces", "Number of detected faces in camera: " + detectedFacesCamera.size());
+        Log.d("compareDetectedFaces", "Number of detected faces in database: " + detectedFacesDatabase.size());
         double dist = 0;
 
-        for (int i = 0; i < detectedFaces1.size(); i++) {
-            Mat face1 = detectedFaces1.get(i);
-            for (int j = 0; j < detectedFaces2.size(); j++) {
-                Mat face2 = detectedFaces2.get(j);
+        for (int i = 0; i < detectedFacesCamera.size(); i++) {
+            Mat face1 = detectedFacesCamera.get(i);
+            for (int j = 0; j < detectedFacesDatabase.size(); j++) {
+                Mat face2 = detectedFacesDatabase.get(j);
                 dist = compareFaces(torchAlgorithm, face1, face2);
 
                 if (dist < 0.6) {
-                    Log.d("FaceRecognition", "Compared Face " + (i + 1) + " of Image1 to Face " + (j + 1) + " of Image2. Distance: " + dist + " - Same Face.");
+                    Log.d("FaceRecognition", "Compared Face " + (i + 1) + " of Camera to Face " + (namesDatabase.get(j)) + " of Database. Distance: " + dist + " - Same Face.");
+                    Log.d("FaceRecognition", "User found" + (namesDatabase.get(j)));
+                    return j;
                 } else if (dist < 0.9) {
-                    Log.d("FaceRecognition", "Compared Face " + (i + 1) + " of Image1 to Face " + (j + 1) + " of Image2. Distance: " + dist + " - Different Face.");
+                    Log.d("FaceRecognition", "Compared Face " + (i + 1) + " of Camera to Face " + (namesDatabase.get(j)) + " of Database. Distance: " + dist + " - Different Face.");
                 } else {
-                    Log.d("FaceRecognition", "Compared Face " + (i + 1) + " of Image1 to Face " + (j + 1) + " of Image2. Distance: " + dist + " - Invalid comparison (likely not a face).");
+                    Log.d("FaceRecognition", "Compared Face " + (i + 1) + " of Camera to Face " + (namesDatabase.get(j)) + " of Database. Distance: " + dist + " - Invalid comparison (likely not a face).");
                 }
             }
         }
 
-        return dist;
+        return -1;
 
     }
 

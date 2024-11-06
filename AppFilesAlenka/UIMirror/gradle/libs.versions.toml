@@ -13,6 +13,8 @@ navigationUiKtx = "2.6.0"
 exifinterface = "1.3.7"
 roomKtx = "2.6.1"
 activity = "1.9.3"
+ksp = "1.9.21-1.0.15"
+gson = "2.11.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -27,8 +29,10 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+androidxRoomCompiler = { module = "androidx.room:room-compiler", version.ref = "roomKtx" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

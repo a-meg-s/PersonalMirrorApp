@@ -13,6 +13,8 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.room.Room
+import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.databinding.ActivityAlarmEditorBinding
 import java.util.*
 
@@ -24,6 +26,14 @@ class AlarmEditorActivity : AppCompatActivity() {
 
     private lateinit var cameraManager: CameraManager // Hinzufügen der Kamera-Manager Instanz
     private lateinit var permissionHandler: PermissionHandler // Instanz von PermissionHandler
+
+    private val database by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            PersonDatabase::class.java,
+            "person_database"
+        ).build()
+    }
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +54,7 @@ class AlarmEditorActivity : AppCompatActivity() {
         }
 
         // Inizialisiert Kamera und Permissionhandler (damit Preview funktioniert)
-        cameraManager = CameraManager(this, findViewById(R.id.previewView)) // Initialisiere CameraManager mit PreviewView
+        cameraManager = CameraManager(this, findViewById(R.id.previewView), database) // Initialisiere CameraManager mit PreviewView
         permissionHandler = PermissionHandler(this) // Initialisiere den PermissionHandler hier
 
         // Starte die Kamera, wenn die Berechtigung gewährt ist

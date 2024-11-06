@@ -6,7 +6,13 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.coroutineScope
+import androidx.room.Room
+import com.example.uimirror.database.PersonDatabase
+import com.example.uimirror.database.models.Music
+import com.example.uimirror.database.models.Person
 import com.example.uimirror.databinding.ActivityMainBinding
+import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
 
 
@@ -19,15 +25,28 @@ class MainActivity : AppCompatActivity() {
     private lateinit var permissionHandler: PermissionHandler // Instanz von PermissionHandler
     private lateinit var musicPlayer: MusicPlayer // Instanz von MusicPlayer
 
+    private val database by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            PersonDatabase::class.java,
+            "person_database"
+        ).build()
+    }
+
     // Getter-Methoden für den Zugriff im PermissionHandler
     fun getCameraManager(): CameraManager = cameraManager
     fun getBinding(): ActivityMainBinding = binding
-
+    private lateinit var primaryUser: Person
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        lifecycle.coroutineScope.launch {
+            //database.personDao().deleteAllPersons()
+            addPersonsIfNeeded()
+        }
 
         initializeOpenCV()
         initializeComponents()
@@ -59,7 +78,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeComponents() {
         // Initialisiere die Klassen für Kamera und Berechtigungen
-        cameraManager = CameraManager(this, binding.previewView)
+        cameraManager = CameraManager(this, binding.previewView, database)
         permissionHandler = PermissionHandler(this)
         musicPlayer = MusicPlayer(this) // Musikplayer initialisieren
 
@@ -149,6 +168,68 @@ class MainActivity : AppCompatActivity() {
     // Neue Methode zum Anzeigen einer Benachrichtigung
     fun showNotification(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private suspend fun addPersonsIfNeeded() {
+        val allPersons = getAllPersons()
+
+
+        if (allPersons.isEmpty()) {
+            Log.d("addPersonsIfNeeded", "Users added")
+            val users = listOf(
+                Person(
+                    id = 1,
+                    name = "Alenka",
+                    faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Alenka_Face.jpg")) ,
+                    musicTracks = listOf(Music(2, 1), Music(3, 2))
+                ),
+                Person(
+                    id = 2,
+                    name = "Maria",
+                    faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Maria_Face.jpg")) ,
+                    musicTracks = listOf()
+                ),
+                Person(
+                    id = 3,
+                    name = "Nico",
+                    faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Nico_Face.jpg")) ,
+                    musicTracks = listOf()
+                ),
+                Person(
+                    id = 4,
+                    name = "Andrea",
+                    faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Andrea_Face.jpg")) ,
+                    musicTracks = listOf(Music(1, 2), Music(2, 3))
+                )
+            )
+            database.personDao().insertAll(users)
+            primaryUser = users.first()
+            primaryUser.isPrimaryUser = true
+            //Update ROOM about primary user
+            database.personDao().insertPerson(primaryUser)
+
+            val insertedUsers = database.personDao().getAllPersons()
+            Log.d("DatabaseCheck", "Number of persons in DB: ${insertedUsers.size}")
+
+        } else {
+            // Change this logic
+            /*
+            * 1. Scan for face in camera using OpenCV
+            * 2. Fetch the user from DB WHERE faceData from OpenCV matches the faceData from DB
+             */
+            primaryUser = database.personDao().getPrimaryUser(true) ?: allPersons.first()
+            //primaryUser = database.personDao().getFaceDetectedPerson(listOf()) ?: allPersons.first()
+
+        }
+    }
+
+    suspend fun getAllPersons(): List<Person> {
+        val persons = database.personDao().getAllPersons()
+
+        if (persons.isEmpty()) {
+            Toast.makeText(this, "Inserting Users", Toast.LENGTH_SHORT).show()
+        }
+        return persons
     }
 }
 

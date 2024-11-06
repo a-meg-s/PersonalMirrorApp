@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.widget.Button
+import androidx.room.Room
+import com.example.uimirror.database.PersonDatabase
 
 class SongSelectionActivity : AppCompatActivity() {
     private lateinit var musicPlayer: MusicPlayer
@@ -18,6 +20,14 @@ class SongSelectionActivity : AppCompatActivity() {
     private lateinit var cameraManager: CameraManager // Hinzufügen der Kamera-Manager Instanz
     private lateinit var permissionHandler: PermissionHandler // Instanz von PermissionHandler
 
+    private val database by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            PersonDatabase::class.java,
+            "person_database"
+        ).build()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_song_selection)
@@ -26,7 +36,7 @@ class SongSelectionActivity : AppCompatActivity() {
         setupSongList()
 
         // Inizialisiert Kamera und Permissionhandler (damit Preview funktioniert)
-        cameraManager = CameraManager(this, findViewById(R.id.previewView)) // Initialisiere CameraManager mit PreviewView
+        cameraManager = CameraManager(this, findViewById(R.id.previewView), database) // Initialisiere CameraManager mit PreviewView
         permissionHandler = PermissionHandler(this) // Initialisiere den PermissionHandler hier
 
 
