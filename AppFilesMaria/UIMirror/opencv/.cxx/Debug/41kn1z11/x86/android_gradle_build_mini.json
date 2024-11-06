@@ -1,26 +1,26 @@
 {
   "buildFiles": [
-    "C:\\Users\\nicog\\AndroidStudioProjects\\IIP-Repository\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\libcxx_helper\\CMakeLists.txt"
+    "C:\\Users\\aleis\\Gitlab\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\libcxx_helper\\CMakeLists.txt"
   ],
   "cleanCommandsComponents": [
     [
-      "C:\\Users\\nicog\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "C:\\Users\\aleis\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
       "-C",
-      "C:\\Users\\nicog\\AndroidStudioProjects\\IIP-Repository\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\.cxx\\Debug\\41kn1z11\\x86",
+      "C:\\Users\\aleis\\Gitlab\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\.cxx\\Debug\\41kn1z11\\x86",
       "clean"
     ]
   ],
   "buildTargetsCommandComponents": [
-    "C:\\Users\\nicog\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "C:\\Users\\aleis\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
     "-C",
-    "C:\\Users\\nicog\\AndroidStudioProjects\\IIP-Repository\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\.cxx\\Debug\\41kn1z11\\x86",
+    "C:\\Users\\aleis\\Gitlab\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\.cxx\\Debug\\41kn1z11\\x86",
     "{LIST_OF_TARGETS_TO_BUILD}"
   ],
   "libraries": {
     "opencv_jni_shared::@6890427a1f51a3e7e1df": {
       "artifactName": "opencv_jni_shared",
       "abi": "x86",
-      "output": "C:\\Users\\nicog\\AndroidStudioProjects\\IIP-Repository\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\.cxx\\Debug\\41kn1z11\\x86\\libopencv_jni_shared.a",
+      "output": "C:\\Users\\aleis\\Gitlab\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\.cxx\\Debug\\41kn1z11\\x86\\libopencv_jni_shared.a",
       "runtimeFiles": []
     }
   }

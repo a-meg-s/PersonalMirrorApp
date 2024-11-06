@@ -34,8 +34,6 @@ class MainActivity : AppCompatActivity() {
         setupUIListeners()
 
 
-
-
         // Berechtigungen beim Start überprüfen
         //requestCameraPermissions()
         if(!permissionHandler.isNotificationPermissionGranted()){

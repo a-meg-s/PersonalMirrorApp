@@ -1,1 +1,1 @@
-C:\Users\nicog\AndroidStudioProjects\IIP-Repository\spiegelapp-blanktemplate\AppFilesMaria\UIMirror\opencv\build\intermediates\cxx\Debug\41kn1z11\obj\x86
+C:\Users\aleis\Gitlab\spiegelapp-blanktemplate\AppFilesMaria\UIMirror\opencv\build\intermediates\cxx\Debug\41kn1z11\obj\x86

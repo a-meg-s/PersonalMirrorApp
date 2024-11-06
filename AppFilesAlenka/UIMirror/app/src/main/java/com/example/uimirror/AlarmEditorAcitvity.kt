@@ -1,6 +1,5 @@
 package com.example.uimirror
 
-import android.Manifest
 import android.app.AlarmManager
 import android.app.AlertDialog
 import android.app.NotificationChannel
@@ -8,14 +7,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.example.uimirror.databinding.ActivityAlarmEditorBinding
 import java.util.*
 
@@ -25,6 +22,10 @@ class AlarmEditorActivity : AppCompatActivity() {
     private lateinit var alarmManager: AlarmManager
     private val REQUEST_SCHEDULE_EXACT_ALARM = 123 // Unique request code
 
+    private lateinit var cameraManager: CameraManager // Hinzufügen der Kamera-Manager Instanz
+    private lateinit var permissionHandler: PermissionHandler // Instanz von PermissionHandler
+
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAlarmEditorBinding.inflate(layoutInflater)
@@ -42,14 +43,24 @@ class AlarmEditorActivity : AppCompatActivity() {
             }
         }
 
-        // Cancel Button
-        binding.cancelButton.setOnClickListener { finish() }
-    }
+        // Inizialisiert Kamera und Permissionhandler (damit Preview funktioniert)
+        cameraManager = CameraManager(this, findViewById(R.id.previewView)) // Initialisiere CameraManager mit PreviewView
+        permissionHandler = PermissionHandler(this) // Initialisiere den PermissionHandler hier
 
+        // Starte die Kamera, wenn die Berechtigung gewährt ist
+        if (permissionHandler.isCameraPermissionGranted()) {
+            cameraManager.startCamera()
+        } else {
+            permissionHandler.showPermissionCameraDeniedDialog()
+        }
+
+    }
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun setAlarm() {
         val intent = Intent(applicationContext, AlarmReceiver::class.java)
-        val title = binding.textView.text.toString()
+        val title = binding.titleET.text.toString()
         val message = "Your alarm is set!"
+        intent.putExtra(titleExtra, title)
 
         val pendingIntent = PendingIntent.getBroadcast(
             applicationContext,
@@ -80,24 +91,27 @@ class AlarmEditorActivity : AppCompatActivity() {
     }
 
     private fun showAlert(time: Long, title: String, message: String) {
+        val date = Date(time)
+        val dateFormat = android.text.format.DateFormat.getLongDateFormat(applicationContext)
         val timeFormat = android.text.format.DateFormat.getTimeFormat(applicationContext)
 
         AlertDialog.Builder(this)
             .setTitle("Notification Scheduled")
-            .setMessage("Title: $title\nMessage: $message\nAt: ${timeFormat.format(Date(time))}")
+            .setMessage("Title: " + title + "\nMessage: " + message + "\nAt: " + dateFormat.format(date) + " " + timeFormat.format(date))
             .setPositiveButton("Okay") { _, _ -> }
             .show()
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun getTime(): Long {
         val minute = binding.timePicker.minute
         val hour = binding.timePicker.hour
-        val calendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, hour)
-            set(Calendar.MINUTE, minute)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
+        val day = binding.datePicker.dayOfMonth
+        val month = binding.datePicker.month
+        val year = binding.datePicker.year
+
+        val calendar = Calendar.getInstance()
+        calendar.set(year, month, day, hour, minute)
         return calendar.timeInMillis
     }
 
@@ -134,3 +148,4 @@ class AlarmEditorActivity : AppCompatActivity() {
         }
     }
 }
+

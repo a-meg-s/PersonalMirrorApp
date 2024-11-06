@@ -11,6 +11,7 @@ import androidx.core.app.NotificationCompat
 
 const val notificationId = 1
 const val channelId = "alarm_channel"
+const val titleExtra = "titleExtra"
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -30,7 +31,7 @@ class AlarmReceiver : BroadcastReceiver() {
         // Build and display the notification
         val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.logo_white) // Replace with actual icon if not available
-            .setContentTitle("Alarm")
+            .setContentTitle(intent.getStringExtra(titleExtra))
             .setContentText("Der Alarm wurde ausgelöst!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)

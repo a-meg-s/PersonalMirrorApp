@@ -1,19 +1,19 @@
 {
   "buildFiles": [
-    "C:\\Users\\nicog\\AndroidStudioProjects\\IIP-Repository\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\libcxx_helper\\CMakeLists.txt"
+    "C:\\Users\\aleis\\Gitlab\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\libcxx_helper\\CMakeLists.txt"
   ],
   "cleanCommandsComponents": [
     [
-      "C:\\Users\\nicog\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "C:\\Users\\aleis\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
       "-C",
-      "C:\\Users\\nicog\\AndroidStudioProjects\\IIP-Repository\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\.cxx\\Debug\\41kn1z11\\x86",
+      "C:\\Users\\aleis\\Gitlab\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\.cxx\\Debug\\41kn1z11\\x86",
       "clean"
     ]
   ],
   "buildTargetsCommandComponents": [
-    "C:\\Users\\nicog\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "C:\\Users\\aleis\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
     "-C",
-    "C:\\Users\\nicog\\AndroidStudioProjects\\IIP-Repository\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\.cxx\\Debug\\41kn1z11\\x86",
+    "C:\\Users\\aleis\\Gitlab\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\.cxx\\Debug\\41kn1z11\\x86",
     "{LIST_OF_TARGETS_TO_BUILD}"
   ],
   "libraries": {
@@ -21,13 +21,13 @@
       "toolchain": "toolchain",
       "abi": "x86",
       "artifactName": "opencv_jni_shared",
-      "output": "C:\\Users\\nicog\\AndroidStudioProjects\\IIP-Repository\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\.cxx\\Debug\\41kn1z11\\x86\\libopencv_jni_shared.a"
+      "output": "C:\\Users\\aleis\\Gitlab\\spiegelapp-blanktemplate\\AppFilesMaria\\UIMirror\\opencv\\.cxx\\Debug\\41kn1z11\\x86\\libopencv_jni_shared.a"
     }
   },
   "toolchains": {
     "toolchain": {
-      "cCompilerExecutable": "C:\\Users\\nicog\\AppData\\Local\\Android\\Sdk\\ndk\\26.1.10909125\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang.exe",
-      "cppCompilerExecutable": "C:\\Users\\nicog\\AppData\\Local\\Android\\Sdk\\ndk\\26.1.10909125\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
+      "cCompilerExecutable": "C:\\Users\\aleis\\AppData\\Local\\Android\\Sdk\\ndk\\26.1.10909125\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang.exe",
+      "cppCompilerExecutable": "C:\\Users\\aleis\\AppData\\Local\\Android\\Sdk\\ndk\\26.1.10909125\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
     }
   },
   "cFileExtensions": [],

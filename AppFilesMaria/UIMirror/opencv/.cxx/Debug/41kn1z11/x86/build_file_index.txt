@@ -1,1 +1,1 @@
-C:\Users\nicog\AndroidStudioProjects\IIP-Repository\spiegelapp-blanktemplate\AppFilesMaria\UIMirror\opencv\libcxx_helper\CMakeLists.txt
+C:\Users\aleis\Gitlab\spiegelapp-blanktemplate\AppFilesMaria\UIMirror\opencv\libcxx_helper\CMakeLists.txt
