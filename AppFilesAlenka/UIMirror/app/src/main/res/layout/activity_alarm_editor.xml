@@ -16,71 +16,64 @@
         app:layout_constraintBottom_toTopOf="@+id/alarmContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-    <!-- bleibt oberhalb der Alarmfunktion -->
+    <!-- bleibt oberhalb der Alarmfunktion-->
 
     <!-- Alarm Container - untere Hälfte -->
     <LinearLayout
         android:id="@+id/alarmContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@android:color/transparent"
         android:orientation="vertical"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/previewView">
+        app:layout_constraintTop_toBottomOf="@+id/previewView">
+        <!--app:layout_constraintTop_toBottomOf="@+id/previewView" Damit Alarm direkt unter Kamera angezeigt wird-->
 
-        <!-- Text Input for Alarm Title -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/titleET"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="5dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
-        </com.google.android.material.textfield.TextInputLayout>
+            android:hint="@string/titel" />
 
-        <!-- DatePicker and TimePicker in Horizontal Layout -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <DatePicker
-                android:id="@+id/datePicker"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:calendarViewShown="false"
-                android:datePickerMode="spinner"
-                android:scaleX="0.7"
-                android:scaleY="0.7"/>
 
-            <TimePicker
-                android:id="@+id/timePicker"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:timePickerMode="spinner"
-                android:scaleX="0.7"
-                android:scaleY="0.7"/>
-        </LinearLayout>
+    <DatePicker
+        android:id="@+id/datePicker"
+        android:layout_width="300dp"
+        android:layout_weight="0.8"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:calendarViewShown="false"
+        android:datePickerMode="spinner"
+        android:paddingTop="10dp"/>
 
-        <!-- Set Alarm and Cancel Buttons -->
-        <Button
-            android:id="@+id/setAlarmButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/alarm_einstellen"
-            android:layout_marginTop="10dp"
-            android:padding="12dp" />
+    <TimePicker
+        android:id="@+id/timePicker"
+        android:layout_width="300dp"
+        android:layout_weight="0.8"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:timePickerMode="spinner"/>
 
-        <Button
-            android:id="@+id/setCancelButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/abbrechen"
-            android:layout_marginTop="5dp"
-            android:padding="12dp" />
+    <Button
+        android:id="@+id/setAlarmButton"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/alarm_einstellen"
+        android:padding="12dp"/>
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

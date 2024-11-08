@@ -11,11 +11,16 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.coroutineScope
 import androidx.room.Room
 import com.example.uimirror.database.PersonDatabase
+import com.example.uimirror.database.models.Alarm
+import com.example.uimirror.database.models.Person
 import com.example.uimirror.databinding.ActivityAlarmEditorBinding
+import kotlinx.coroutines.launch
 import java.util.*
 
 class AlarmEditorActivity : AppCompatActivity() {
@@ -26,6 +31,7 @@ class AlarmEditorActivity : AppCompatActivity() {
 
     private lateinit var cameraManager: CameraManager // Hinzufügen der Kamera-Manager Instanz
     private lateinit var permissionHandler: PermissionHandler // Instanz von PermissionHandler
+    private lateinit var primaryUser: Person
 
     private val database by lazy {
         Room.databaseBuilder(
@@ -63,8 +69,9 @@ class AlarmEditorActivity : AppCompatActivity() {
         } else {
             permissionHandler.showPermissionCameraDeniedDialog()
         }
-
     }
+
+
     @RequiresApi(Build.VERSION_CODES.M)
     private fun setAlarm() {
         val intent = Intent(applicationContext, AlarmReceiver::class.java)
@@ -97,7 +104,25 @@ class AlarmEditorActivity : AppCompatActivity() {
             )
         }
 
+        lifecycle.coroutineScope.launch {
+            val allPersons = getAllPersons()
+            primaryUser = database.personDao().getPrimaryUser(true) ?: allPersons.first()
+            primaryUser.alarm = Alarm(dateTime = time)
+
+            database.personDao().insertPerson(primaryUser)
+        }
+
+
+
         showAlert(time, title, message)
+    }
+
+    suspend fun getAllPersons(): List<Person> {
+        val persons = database.personDao().getAllPersons()
+        if (persons.isEmpty()) {
+            Toast.makeText(this, "Inserting Users", Toast.LENGTH_SHORT).show()
+        }
+        return persons
     }
 
     private fun showAlert(time: Long, title: String, message: String) {

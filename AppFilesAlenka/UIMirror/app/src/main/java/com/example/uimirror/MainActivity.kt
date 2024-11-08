@@ -202,11 +202,13 @@ class MainActivity : AppCompatActivity() {
                     musicTracks = listOf(Music(1, 2), Music(2, 3))
                 )
             )
+            // First launch of app
             database.personDao().insertAll(users)
+            //first user from the table becomes the primary user
             primaryUser = users.first()
-            primaryUser.isPrimaryUser = true
+            markUserAsPrimary(users, primaryUser)
             //Update ROOM about primary user
-            database.personDao().insertPerson(primaryUser)
+
 
             val insertedUsers = database.personDao().getAllPersons()
             Log.d("DatabaseCheck", "Number of persons in DB: ${insertedUsers.size}")
@@ -222,6 +224,23 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+
+
+    /**
+     * This method is used to make a preferred person a Primary User and everyone else to be normal users.
+     */
+    suspend fun markUserAsPrimary(allPersons: List<Person>, primaryUser: Person) {
+        for (person in allPersons) {
+            if (person.id == primaryUser.id) {
+                person.isPrimaryUser = true
+            } else {
+                person.isPrimaryUser = false
+            }
+        }
+
+        database.personDao().insertPerson(primaryUser)
+    }
+
 
     suspend fun getAllPersons(): List<Person> {
         val persons = database.personDao().getAllPersons()
