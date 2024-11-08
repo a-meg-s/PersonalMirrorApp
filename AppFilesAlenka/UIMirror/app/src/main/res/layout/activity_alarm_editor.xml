@@ -69,11 +69,18 @@
 
     <Button
         android:id="@+id/setAlarmButton"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/alarm_einstellen"
         android:padding="12dp"/>
 
+       <Button
+            android:id="@+id/setCancelButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/abbrechen"
+            android:layout_marginTop="5dp"
+            android:padding="12dp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

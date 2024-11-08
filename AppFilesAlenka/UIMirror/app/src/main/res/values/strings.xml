@@ -6,7 +6,6 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
@@ -45,4 +44,5 @@
     </string>
     <string name="titel">Titel</string>
     <string name="alarm_einstellen">alarm einstellen</string>
+    <string name="abbrechen">Cancel</string>
 </resources>
