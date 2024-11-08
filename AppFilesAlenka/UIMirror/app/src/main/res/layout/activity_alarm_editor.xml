@@ -82,5 +82,6 @@
             android:text="@string/abbrechen"
             android:layout_marginTop="5dp"
             android:padding="12dp" />
+            
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
