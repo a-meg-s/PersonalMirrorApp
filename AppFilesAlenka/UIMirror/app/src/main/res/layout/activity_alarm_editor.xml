@@ -29,8 +29,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/previewView">
-        <!--app:layout_constraintTop_toBottomOf="@+id/previewView" Damit Alarm direkt unter Kamera angezeigt wird-->
-
+        
+    <!-- Text Input for Alarm Title -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-
+     <!-- DatePicker and TimePicker in Horizontal Layout -->
     <DatePicker
         android:id="@+id/datePicker"
         android:layout_width="300dp"
@@ -65,6 +65,7 @@
         android:layout_gravity="center"
         android:timePickerMode="spinner"/>
 
+    <!-- Set Alarm and Cancel Buttons -->
     <Button
         android:id="@+id/setAlarmButton"
         android:layout_width="match_parent"
