@@ -17,6 +17,9 @@ interface PersonDao {
     @Query("SELECT * FROM Person WHERE id = :id")
     suspend fun getPerson(id: Long): Person?
 
+    @Query("SELECT * FROM Person WHERE name = :name")
+    suspend fun getPersonByName(name: String): Person?
+
 
     @Query("SELECT * FROM Person WHERE isPrimaryUser = :isPrimaryUser")
     suspend fun getPrimaryUser(isPrimaryUser: Boolean): Person?

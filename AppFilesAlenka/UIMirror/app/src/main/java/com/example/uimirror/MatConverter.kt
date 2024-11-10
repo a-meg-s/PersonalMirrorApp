@@ -2,6 +2,7 @@ package com.example.uimirror
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import com.example.uimirror.database.models.Person
 import org.opencv.android.Utils
 import org.opencv.core.CvType
 import org.opencv.core.Mat

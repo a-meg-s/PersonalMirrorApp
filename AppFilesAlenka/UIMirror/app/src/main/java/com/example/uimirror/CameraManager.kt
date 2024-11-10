@@ -1,47 +1,44 @@
 package com.example.uimirror
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.os.Environment
 import android.util.Log
-import android.view.Surface
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.compose.ui.geometry.Size
 import androidx.core.content.ContextCompat
 import com.example.uimirror.database.PersonDatabase
+import com.example.uimirror.database.models.Person
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.opencv.core.Core
 import org.opencv.core.Core.ROTATE_90_COUNTERCLOCKWISE
 import org.opencv.core.CvType
 import org.opencv.core.Mat
-import org.opencv.core.MatOfByte
 import org.opencv.dnn.Dnn
 import org.opencv.dnn.Net
-import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
 import org.opencv.objdetect.CascadeClassifier
-import java.io.File
-import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlin.math.log
 
 // This class manages the camera and its preview
 class CameraManager(private val context: Context, private val previewView: PreviewView?, private val database: PersonDatabase) {
+    private var allUsers: List<Person>? = null
     private var cachedUserFaces: List<Mat>? = null
     private var cachedUserNames: List<String>? = null
+
+    private var detectedPerson: String? = null;
     init {
         // Ensure the models are loaded at initialization
         loadModels(context)
-        cachedUserFaces = cacheUserFaces()
-        cachedUserNames = cacheUserNames()
+        allUsers = cacheUsers()
+        cachedUserFaces = cacheUserFaces(allUsers)
+        cachedUserNames = cacheUserNames(allUsers)
     }
 
     companion object {
@@ -167,45 +164,58 @@ class CameraManager(private val context: Context, private val previewView: Previ
         if (faceDetector != null && faceRecognitionNet != null) {
             val detectedFacesCamera = FaceDetection.detectAndCropFaceOpenCV(mat, faceDetector)
 
-            FaceRecognition.compareDetectedFaces(
+           detectedPerson = FaceRecognition.compareDetectedFaces(
                 detectedFacesCamera,
                 cachedUserFaces,
                 cachedUserNames,
                 faceRecognitionNet
             )
+            detectedPerson?.let { updatePrimaryUser(allUsers, it) }
 
         } else {
             Log.e("CameraManager", "Face detector or recognition model is not loaded.")
         }
     }
+    fun updatePrimaryUser(allUsers: List<Person>?, name: String){
 
-    private fun cacheUserFaces(): List<Mat> {
-        val faceList = mutableListOf<Mat>()
-        CoroutineScope(Dispatchers.IO).launch {
-            val allUsers = database.personDao().getAllPersons()
+        if (allUsers != null) {
+            for (person in allUsers) {
+                person.isPrimaryUser = (person.name == name)
+            }
 
-            Log.d("CameraManager", "Cached ${allUsers.size} users from database.")
-
-            faceList.addAll(allUsers.mapNotNull { user ->
-                byteArrayToMat(user.faceData)
-            })
-
-            Log.d("CameraManager", "Collected faceData for ${faceList.size} users for Face extraction.")
+            // Save updated list to database
+            CoroutineScope(Dispatchers.IO).launch {
+                database.personDao().insertAll(allUsers)
+            }
         }
+
+    }
+
+    private fun cacheUsers(): List<Person>? {
+        return runBlocking {
+            val allUsers = database.personDao().getAllPersons()
+            Log.d("CameraManager", "Cached ${allUsers.size} users from database.")
+            allUsers
+        }
+    }
+
+    private fun cacheUserFaces(user: List<Person>?): List<Mat> {
+        if (user == null) return emptyList()
+
+        val faceList = user.mapNotNull { byteArrayToMat(it.faceData) }
+
+        Log.d("CameraManager", "Collected faceData for ${faceList.size} users for Face extraction.")
+
         return faceList
     }
-    private fun cacheUserNames(): List<String> {
-        val nameList = mutableListOf<String>()
-        CoroutineScope(Dispatchers.IO).launch {
-            val allUsers = database.personDao().getAllPersons()
-            Log.d("CameraManager", "Cached ${allUsers.size} users from database for Name extraction.")
 
-            nameList.addAll(allUsers.mapNotNull { user ->
-                user.name
-            })
+    private fun cacheUserNames(user: List<Person>?): List<String> {
+        if (user == null) return emptyList()
 
-            Log.d("CameraManager", "Collected faceData for ${nameList.size} users.")
-        }
+        val nameList = user.mapNotNull { it.name }
+
+        Log.d("CameraManager", "Collected names for ${nameList.size} users.")
+
         return nameList
     }
 

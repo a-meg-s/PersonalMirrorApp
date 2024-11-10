@@ -22,7 +22,7 @@ import java.util.List;
 public class FaceRecognition {
 
     // Method to compare two sets of detected faces
-    public static double compareDetectedFaces(List<Mat> detectedFacesCamera, List<Mat> detectedFacesDatabase, List<String> namesDatabase, Net torchAlgorithm) {
+    public static String compareDetectedFaces(List<Mat> detectedFacesCamera, List<Mat> detectedFacesDatabase, List<String> namesDatabase, Net torchAlgorithm) {
         Log.d("compareDetectedFaces", "Number of detected faces in camera: " + detectedFacesCamera.size());
         Log.d("compareDetectedFaces", "Number of detected faces in database: " + detectedFacesDatabase.size());
         double dist = 0;
@@ -35,8 +35,9 @@ public class FaceRecognition {
 
                 if (dist < 0.6) {
                     Log.d("FaceRecognition", "Compared Face " + (i + 1) + " of Camera to Face " + (namesDatabase.get(j)) + " of Database. Distance: " + dist + " - Same Face.");
-                    Log.d("FaceRecognition", "User found" + (namesDatabase.get(j)));
-                    return j;
+                    Log.d("FaceRecognition", "User found: " + (namesDatabase.get(j)));
+
+                    return namesDatabase.get(j);
                 } else if (dist < 0.9) {
                     Log.d("FaceRecognition", "Compared Face " + (i + 1) + " of Camera to Face " + (namesDatabase.get(j)) + " of Database. Distance: " + dist + " - Different Face.");
                 } else {
@@ -45,7 +46,7 @@ public class FaceRecognition {
             }
         }
 
-        return -1;
+        return null;
 
     }
 
