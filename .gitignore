@@ -1,0 +1,44 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Ignore build and output directories for all subdirectories
+**/build/
+**/intermediates/
+**/outputs/
+
+# Ignore IDE and config files
+.idea/
+
+# Ignore specific generated directories in AppFilesMaria
+AppFilesMaria/UIMirror/opencv/build/
+AppFilesMaria/UIMirror/app/build/
+AppFilesMaria/UIMirror/.idea/
+AppFilesMaria/UIMirror/.gradle/
+
+# Ignore specific generated directories in AppFilesNico
+AppFilesNico/app/build/
+AppFilesNico/OpenCV/build/
+AppFilesNico/.idea/
+AppFilesNico/.gradle/
+
+# Ignore generated directories in AppFilesAlenka
+AppFilesAlenka/UIMirror/build/
+AppFilesAlenka/MyApplication/build/
+AppFilesAlenka/UIMirror/.idea/
+AppFilesAlenka/MyApplication/.idea/
+AppFilesAlenka/UIMirror/.gradle/
+AppFilesAlenka/MyApplication/.gradle/
+AppFilesAlenka/UIMirror/opencv/build/
