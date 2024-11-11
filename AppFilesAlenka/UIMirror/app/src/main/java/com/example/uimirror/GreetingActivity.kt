@@ -80,7 +80,13 @@ class GreetingActivity : AppCompatActivity() {
     // Methode zum Aktualisieren des Textes, wenn eine Person erkannt wird evtl.
     fun updateGreeting(personName: String?) {
         val greetingText = findViewById<TextView>(R.id.greetingTextView)
-        greetingText.text = "Hello, ${personName ?: "Stranger"}!"
+
+        // Show the appropriate greeting based on whether a name is detected
+        greetingText.text = if (personName == null) {
+            "Versucht Person zu erkennen"
+        } else {
+            "Hallo, $personName"
+        }
 
         // Verzögerung für 5 Sekunden und dann zur MainActivity wechseln
         Handler(Looper.getMainLooper()).postDelayed({
