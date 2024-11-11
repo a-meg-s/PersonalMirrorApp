@@ -50,6 +50,12 @@ class AlarmEditorActivity : AppCompatActivity() {
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         createNotificationChannel()
 
+        // Cancel Button
+        binding.setCancelButton.setOnClickListener {
+            finish()
+        }
+
+
         // Set Alarm Button
         binding.setAlarmButton.setOnClickListener {
             if (checkExactAlarmPermission()) {
@@ -58,6 +64,7 @@ class AlarmEditorActivity : AppCompatActivity() {
                 requestExactAlarmPermission()
             }
         }
+
 
         // Inizialisiert Kamera und Permissionhandler (damit Preview funktioniert)
         cameraManager = CameraManager(this, findViewById(R.id.previewView), database) // Initialisiere CameraManager mit PreviewView
