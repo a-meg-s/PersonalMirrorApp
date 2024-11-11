@@ -32,6 +32,7 @@ class SongSelectionActivity : AppCompatActivity() {
     }
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_song_selection)
@@ -45,9 +46,8 @@ class SongSelectionActivity : AppCompatActivity() {
 
 
         returnToMainActivity()
-        lifecycleScope.launch {
-            deactivateMainSong()
-        }
+        deactivateMainSong()
+
 
         // Starte die Kamera, wenn die Berechtigung gewährt ist
         if (permissionHandler.isCameraPermissionGranted()) {
@@ -89,16 +89,16 @@ class SongSelectionActivity : AppCompatActivity() {
     private  fun deactivateMainSong() {
         val deactivateButton =  findViewById<Button>(R.id.deactivateMainSongButton)
 
-        lifecycleScope.launch {
-            if(musicPlayer.isMusicEnabled()){
-                deactivateButton.text = "Song deaktivieren" // Button-Text ändern
-            } else{
-                deactivateButton.text = "Song aktivieren" // Button-Text ändern
-            }
 
-            deactivateButton.setOnClickListener {
+        if(musicPlayer.isMusicEnabled()){
+            deactivateButton.text = "Song deaktivieren" // Button-Text ändern
+        } else{
+            deactivateButton.text = "Song aktivieren" // Button-Text ändern
+        }
+
+        deactivateButton.setOnClickListener {
                 // Überprüfen, ob Musik gerade läuft
-                lifecycleScope.launch {
+                //lifecycleScope.launch {
                     if (musicPlayer.isMusicEnabled()) {
                         musicPlayer.pauseMainSong() // Musik pausieren
                         musicPlayer.setMusicEnabled(false) // Musik als deaktiviert markieren
@@ -110,8 +110,8 @@ class SongSelectionActivity : AppCompatActivity() {
                         deactivateButton.text = "Song deaktivieren" // Button-Text ändern
                         // Toast.makeText(this, "Hauptmusik aktiviert", Toast.LENGTH_SHORT).show()
                     }
-                }
-            }
+                //}
+
         }
     }
 

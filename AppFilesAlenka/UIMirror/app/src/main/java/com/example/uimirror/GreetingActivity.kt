@@ -28,7 +28,7 @@ class GreetingActivity : AppCompatActivity() {
         }*/
 
         //Beispiel text mit Name (später holen von Datenbank nach erkennung...)
-        val recognizedName = "Alenka"
+        var recognizedName = "Alenka"
         // Aktuallisiert Begrüssungstext mit Name
         binding.greetingTextView.text = "Hallo, $recognizedName"
 
