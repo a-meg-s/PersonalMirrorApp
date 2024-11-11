@@ -44,10 +44,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        lifecycle.coroutineScope.launch {
-            //database.personDao().deleteAllPersons()
-            addPersonsIfNeeded()
-        }
 
         initializeOpenCV()
         initializeComponents()
@@ -171,87 +167,5 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    // Methode überprüft, ob Benutzer in der Datenbank existieren, und markiert den erkannten Benutzer als „Primary User“.
-    private suspend fun addPersonsIfNeeded() {
-        val allPersons = getAllPersons()
-
-        // Benutzer erstmalig hinzufügen
-        if (allPersons.isEmpty()) {
-            Log.d("addPersonsIfNeeded", "Users added")
-            val users = listOf(
-                Person(
-                    id = 1,
-                    name = "Alenka",
-                    faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Alenka_Face.jpg")) ,
-
-                    ),
-                Person(
-                    id = 2,
-                    name = "Maria",
-                    faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Maria_Face.jpg")) ,
-
-                    ),
-                Person(
-                    id = 3,
-                    name = "Nico",
-                    faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Nico_Face.jpg")) ,
-
-                    ),
-                Person(
-                    id = 4,
-                    name = "Andrea",
-                    faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Andrea_Face.jpg")) ,
-
-                    )
-            )
-            // First launch of app
-            database.personDao().insertAll(users)
-            //first user from the table becomes the primary user
-            primaryUser = users.first()
-            markUserAsPrimary(users, primaryUser)
-            //Update ROOM about primary user
-
-
-            val insertedUsers = database.personDao().getAllPersons()
-            Log.d("DatabaseCheck", "Number of persons in DB: ${insertedUsers.size}")
-
-        } else {
-            // Change this logic
-            /*
-            * 1. Scan for face in camera using OpenCV
-            * 2. Fetch the user from DB WHERE faceData from OpenCV matches the faceData from DB
-             */
-            // Benutzer aus der Datenbank holen und den aktuellen Benutzer erkennen
-            primaryUser = database.personDao().getPrimaryUser(true) ?: allPersons.first()
-            //primaryUser = database.personDao().getFaceDetectedPerson(listOf()) ?: allPersons.first()
-
-        }
-    }
-
-
-    /**
-     * This method is used to make a preferred person a Primary User and everyone else to be normal users.
-     */
-    suspend fun markUserAsPrimary(allPersons: List<Person>, primaryUser: Person) {
-        for (person in allPersons) {
-            if (person.id == primaryUser.id) {
-                person.isPrimaryUser = true
-            } else {
-                person.isPrimaryUser = false
-            }
-        }
-
-        database.personDao().insertPerson(primaryUser)
-    }
-
-
-    suspend fun getAllPersons(): List<Person> {
-        val persons = database.personDao().getAllPersons()
-
-        if (persons.isEmpty()) {
-            Toast.makeText(this, "Inserting Users", Toast.LENGTH_SHORT).show()
-        }
-        return persons
-    }
 }
 

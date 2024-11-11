@@ -2,43 +2,123 @@ package com.example.uimirror
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.coroutineScope
+import androidx.room.Room
+import com.example.uimirror.database.PersonDatabase
+import com.example.uimirror.database.models.Person
 import com.example.uimirror.databinding.ActivityGreetingBinding
+import kotlinx.coroutines.launch
+import org.opencv.android.OpenCVLoader
 
 class GreetingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityGreetingBinding
-  //  private lateinit var cameraManager: CameraManager // Kamera-Manager Instanz
-  //  private lateinit var permissionHandler: PermissionHandler // PermissionHandler Instanz
+    private lateinit var cameraManager: CameraManager // Kamera-Manager Instanz
+    private lateinit var permissionHandler: PermissionHandler // PermissionHandler Instanz
+    private lateinit var musicPlayer: MusicPlayer // Instanz von MusicPlayer
+
+    private val database by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            PersonDatabase::class.java,
+            "person_database"
+        ) .fallbackToDestructiveMigration()
+            .build()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityGreetingBinding.inflate(layoutInflater) // Data Binding-Instanz für das Layout "login_view" erstellen
-        setContentView(binding.root) // Setze den Inhalt der Activity auf die root-View des Bindings
+        binding = ActivityGreetingBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        lifecycle.coroutineScope.launch {
+            addPersonsIfNeeded()
+        }
+
+        initializeOpenCV()
+        initializeComponents()
+
+
+        binding.root.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
 /*
-        cameraManager = CameraManager(this, binding.previewView) // Initialisiere den Kamera-Manager direkt mit `binding.previewView`
-        permissionHandler = PermissionHandler(this) // Initialisiere den PermissionHandler für die Berechtigungsprüfung
+        val recognizedName = "Alenka"
+        binding.greetingTextView.text = "Hallo, $recognizedName"*/
+    }
 
-        // Starte die Kamera, wenn die Berechtigung gewährt ist
+    private fun initializeOpenCV() {
+        if (OpenCVLoader.initDebug()) {
+            Log.i("GreetingActivity", "OpenCV loaded successfully")
+        } else {
+            Log.e("GreetingActivity", "OpenCV initialization failed!")
+            Toast.makeText(this, "OpenCV initialization failed!", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun initializeComponents() {
+        cameraManager = CameraManager(this, binding.previewView, database)
+        permissionHandler = PermissionHandler(this)
+
         if (permissionHandler.isCameraPermissionGranted()) {
             cameraManager.startCamera()
         } else {
             permissionHandler.showPermissionCameraDeniedDialog()
-        }*/
+        }
 
-        //Beispiel text mit Name (später holen von Datenbank nach erkennung...)
-        var recognizedName = "Alenka"
-        // Aktuallisiert Begrüssungstext mit Name
-        binding.greetingTextView.text = "Hallo, $recognizedName"
+    }
 
-        // Setze einen OnTouchListener auf das gesamte Layout
-        binding.root.setOnClickListener {
-            // Wechsle zur MainActivity
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish() // Optional: Schließe die LoginActivity, wenn du nicht mehr zurückkehren möchtest
-            }
+    // Methode zum Aktualisieren des Textes, wenn eine Person erkannt wird evtl.
+    fun updateGreeting(personName: String?) {
+        val greetingText = findViewById<TextView>(R.id.greetingTextView)
+        greetingText.text = "Hello, ${personName ?: "Stranger"}!"
 
+        // Verzögerung für 5 Sekunden und dann zur MainActivity wechseln
+        Handler(Looper.getMainLooper()).postDelayed({
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }, 5000) // 5000 Millisekunden = 5 Sekunden
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        permissionHandler.handlePermissionsResult(requestCode, grantResults)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraManager.shutdown()
+    }
+
+    private suspend fun addPersonsIfNeeded() {
+        val allPersons = getAllPersons()
+        if (allPersons.isEmpty()) {
+            Log.d("addPersonsIfNeeded", "Users added")
+            val users = listOf(
+                Person(id = 1, name = "Alenka", faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Alenka_Face.jpg"))),
+                Person(id = 2, name = "Maria", faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Maria_Face.jpg"))),
+                Person(id = 3, name = "Nico", faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Nico_Face.jpg"))),
+                Person(id = 4, name = "Andrea", faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Andrea_Face.jpg")))
+            )
+            database.personDao().insertAll(users)
         }
     }
+
+    private suspend fun getAllPersons(): List<Person> {
+        val persons = database.personDao().getAllPersons()
+        if (persons.isEmpty()) {
+            Toast.makeText(this, "Inserting Users", Toast.LENGTH_SHORT).show()
+        }
+        return persons
+    }
+}

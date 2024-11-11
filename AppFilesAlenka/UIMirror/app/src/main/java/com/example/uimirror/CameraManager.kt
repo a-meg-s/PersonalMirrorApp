@@ -9,6 +9,8 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModelProvider
 import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Person
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +35,7 @@ class CameraManager(private val context: Context, private val previewView: Previ
     private var cachedUserNames: List<String>? = null
 
     private var detectedPerson: String? = null;
+
     init {
         // Ensure the models are loaded at initialization
         loadModels(context)
@@ -40,6 +43,16 @@ class CameraManager(private val context: Context, private val previewView: Previ
         cachedUserFaces = cacheUserFaces(allUsers)
         cachedUserNames = cacheUserNames(allUsers)
     }
+
+    // Diese Methode setzt den erkannten Namen und informiert die GreetingActivity
+    private fun setDetectedPerson(personName: String) {
+        detectedPerson = personName
+        // Wenn der Kontext die GreetingActivity ist, rufen wir die Methode zum Aktualisieren des Namens auf
+        if (context is GreetingActivity) {
+            (context as GreetingActivity).updateGreeting(detectedPerson)
+        }
+    }
+
 
     companion object {
         private var faceDetector: CascadeClassifier? = null
@@ -60,9 +73,12 @@ class CameraManager(private val context: Context, private val previewView: Previ
 
         }
 
+
     }
 
-    // Starts the camera
+
+
+        // Starts the camera
     fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
         cameraProviderFuture.addListener({
@@ -84,7 +100,7 @@ class CameraManager(private val context: Context, private val previewView: Previ
             try {
                 cameraProvider.unbindAll()
                 // KAMERA UMSTELLEN BEI TABLET (FRONT)/ EMULATOR (BACK)
-                val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
                 cameraProvider.bindToLifecycle(
                     context as androidx.lifecycle.LifecycleOwner,
                     cameraSelector,
@@ -170,7 +186,11 @@ class CameraManager(private val context: Context, private val previewView: Previ
                 cachedUserNames,
                 faceRecognitionNet
             )
-            detectedPerson?.let { updatePrimaryUser(allUsers, it) }
+            detectedPerson?.let {
+                updatePrimaryUser(allUsers, it)
+                // Person wurde erkannt, also setze den Namen in der Activity
+                setDetectedPerson(it)
+            }
 
         } else {
             Log.e("CameraManager", "Face detector or recognition model is not loaded.")
