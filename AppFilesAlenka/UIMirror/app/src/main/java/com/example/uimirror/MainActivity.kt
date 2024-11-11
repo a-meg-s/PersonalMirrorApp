@@ -181,25 +181,25 @@ class MainActivity : AppCompatActivity() {
                     id = 1,
                     name = "Alenka",
                     faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Alenka_Face.jpg")) ,
-                    musicTracks = listOf(Music(2, 1), Music(3, 2))
+                    
                 ),
                 Person(
                     id = 2,
                     name = "Maria",
                     faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Maria_Face.jpg")) ,
-                    musicTracks = listOf()
+
                 ),
                 Person(
                     id = 3,
                     name = "Nico",
                     faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Nico_Face.jpg")) ,
-                    musicTracks = listOf()
+
                 ),
                 Person(
                     id = 4,
                     name = "Andrea",
                     faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Andrea_Face.jpg")) ,
-                    musicTracks = listOf(Music(1, 2), Music(2, 3))
+
                 )
             )
             // First launch of app

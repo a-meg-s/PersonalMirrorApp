@@ -9,8 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.widget.Button
+import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import com.example.uimirror.database.PersonDatabase
+import kotlinx.coroutines.launch
 
 class SongSelectionActivity : AppCompatActivity() {
     private lateinit var musicPlayer: MusicPlayer
@@ -25,8 +27,10 @@ class SongSelectionActivity : AppCompatActivity() {
             applicationContext,
             PersonDatabase::class.java,
             "person_database"
-        ).build()
+        ) .fallbackToDestructiveMigration()  // Daten werden bei jeder Versionsänderung gelöscht
+            .build()
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +45,9 @@ class SongSelectionActivity : AppCompatActivity() {
 
 
         returnToMainActivity()
-        deactivateMainSong()
+        lifecycleScope.launch {
+            deactivateMainSong()
+        }
 
         // Starte die Kamera, wenn die Berechtigung gewährt ist
         if (permissionHandler.isCameraPermissionGranted()) {
@@ -80,26 +86,31 @@ class SongSelectionActivity : AppCompatActivity() {
     }
 
     // In SongSelectionActivity
-    private fun deactivateMainSong() {
-       val deactivateButton =  findViewById<Button>(R.id.deactivateMainSongButton)
-       if(musicPlayer.isMusicEnabled()){
-           deactivateButton.text = "Song deaktivieren" // Button-Text ändern
-       } else{
-           deactivateButton.text = "Song aktivieren" // Button-Text ändern
-       }
+    private  fun deactivateMainSong() {
+        val deactivateButton =  findViewById<Button>(R.id.deactivateMainSongButton)
 
-           deactivateButton.setOnClickListener {
-            // Überprüfen, ob Musik gerade läuft
-            if (musicPlayer.isMusicEnabled()) {
-                musicPlayer.pauseMainSong() // Musik pausieren
-                musicPlayer.setMusicEnabled(false) // Musik als deaktiviert markieren
-                deactivateButton.text = "Song aktivieren" // Button-Text ändern
-                Toast.makeText(this, "Hauptmusik deaktiviert", Toast.LENGTH_SHORT).show()
-                Log.d("SongSelectionActivity", "deactivateMainSong: Deactivate Main Song button clicked")
-            } else {
-                musicPlayer.setMusicEnabled(true) // Musik als aktiviert markieren
+        lifecycleScope.launch {
+            if(musicPlayer.isMusicEnabled()){
                 deactivateButton.text = "Song deaktivieren" // Button-Text ändern
-                Toast.makeText(this, "Hauptmusik aktiviert", Toast.LENGTH_SHORT).show()
+            } else{
+                deactivateButton.text = "Song aktivieren" // Button-Text ändern
+            }
+
+            deactivateButton.setOnClickListener {
+                // Überprüfen, ob Musik gerade läuft
+                lifecycleScope.launch {
+                    if (musicPlayer.isMusicEnabled()) {
+                        musicPlayer.pauseMainSong() // Musik pausieren
+                        musicPlayer.setMusicEnabled(false) // Musik als deaktiviert markieren
+                        deactivateButton.text = "Song aktivieren" // Button-Text ändern
+                        //Toast.makeText(this, "Hauptmusik deaktiviert", Toast.LENGTH_SHORT).show()
+                        Log.d("SongSelectionActivity", "deactivateMainSong: Deactivate Main Song button clicked")
+                    } else {
+                        musicPlayer.setMusicEnabled(true) // Musik als aktiviert markieren
+                        deactivateButton.text = "Song deaktivieren" // Button-Text ändern
+                        // Toast.makeText(this, "Hauptmusik aktiviert", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
