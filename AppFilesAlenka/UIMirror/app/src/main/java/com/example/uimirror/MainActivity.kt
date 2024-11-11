@@ -30,7 +30,8 @@ class MainActivity : AppCompatActivity() {
             applicationContext,
             PersonDatabase::class.java,
             "person_database"
-        ).build()
+        ) .fallbackToDestructiveMigration()  // Daten werden bei jeder Versionsänderung gelöscht
+            .build()
     }
 
     // Getter-Methoden für den Zugriff im PermissionHandler
@@ -57,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         //requestCameraPermissions()
         if(!permissionHandler.isNotificationPermissionGranted()){
             permissionHandler.showPermissionNotificationDeniedDialog()
-            }
+        }
         // Request storage permissions if not already granted
         if (!permissionHandler.isStoragePermissionGranted()) {
             permissionHandler.requestStoragePermissions()
@@ -118,9 +119,9 @@ class MainActivity : AppCompatActivity() {
         }
         // Setze den OnClickListener für das Kalender-Icon
         binding.playIcon?.setOnClickListener {
-                musicPlayer.pauseMainSong()
-                val intent = Intent(this, SongSelectionActivity::class.java)
-                startActivity(intent)
+            musicPlayer.pauseMainSong()
+            val intent = Intent(this, SongSelectionActivity::class.java)
+            startActivity(intent)
 
         }
     }
@@ -136,21 +137,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Überprüfen und abspielen des ausgewählten Songs bei rückkehr zur Activity
-       if(!musicPlayer.isMainPlaying()) {
-           Log.e("MainActivity", "Music is playing");
-           if(musicPlayer.isMusicEnabled()){
-               Log.e("MainActivity", "Music is enabled");
-               musicPlayer.playMainSong()
-           }
-       } else{
-           Log.e("MainActivity", "Music not playing");
-       }
+        if(!musicPlayer.isMainPlaying()) {
+            Log.i("MainActivity", "Music is playing");
+            if(musicPlayer.isMusicEnabled()){
+                Log.i("MainActivity", "Music is enabled");
+                musicPlayer.playMainSong()
+            }
+        } else{
+            Log.e("MainActivity", "Music not playing");
+        }
     }
 
     override fun onPause() {
         super.onPause()
-      //  musicPlayer.pauseMainSong()
-      //  musicPlayer.release()
+        //  musicPlayer.pauseMainSong()
+        //  musicPlayer.release()
     }
 
     // wird von Android autom. aufgerufen, enn Berechtigungsanfrage bearbeitet wurde.
@@ -170,10 +171,11 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
+    // Methode überprüft, ob Benutzer in der Datenbank existieren, und markiert den erkannten Benutzer als „Primary User“.
     private suspend fun addPersonsIfNeeded() {
         val allPersons = getAllPersons()
 
-
+        // Benutzer erstmalig hinzufügen
         if (allPersons.isEmpty()) {
             Log.d("addPersonsIfNeeded", "Users added")
             val users = listOf(
@@ -181,26 +183,26 @@ class MainActivity : AppCompatActivity() {
                     id = 1,
                     name = "Alenka",
                     faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Alenka_Face.jpg")) ,
-                    
-                ),
+
+                    ),
                 Person(
                     id = 2,
                     name = "Maria",
                     faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Maria_Face.jpg")) ,
 
-                ),
+                    ),
                 Person(
                     id = 3,
                     name = "Nico",
                     faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Nico_Face.jpg")) ,
 
-                ),
+                    ),
                 Person(
                     id = 4,
                     name = "Andrea",
                     faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Andrea_Face.jpg")) ,
 
-                )
+                    )
             )
             // First launch of app
             database.personDao().insertAll(users)
@@ -219,6 +221,7 @@ class MainActivity : AppCompatActivity() {
             * 1. Scan for face in camera using OpenCV
             * 2. Fetch the user from DB WHERE faceData from OpenCV matches the faceData from DB
              */
+            // Benutzer aus der Datenbank holen und den aktuellen Benutzer erkennen
             primaryUser = database.personDao().getPrimaryUser(true) ?: allPersons.first()
             //primaryUser = database.personDao().getFaceDetectedPerson(listOf()) ?: allPersons.first()
 
