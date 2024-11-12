@@ -12,7 +12,7 @@ import com.example.uimirror.database.models.Person
 import com.example.uimirror.database.typeconverters.ByteTypeConverter
 import com.example.uimirror.database.typeconverters.SingleAlarmTypeConverter
 
-@Database(entities = [Person::class, Music::class, Alarm::class], version = 1, exportSchema = false,)
+@Database(entities = [Person::class, Music::class, Alarm::class], version = 2, exportSchema = false,)
 @TypeConverters(SingleAlarmTypeConverter::class, MusicTypeConverter::class, LongTypeConverter::class, ByteTypeConverter::class)
 abstract class PersonDatabase: RoomDatabase() {
     abstract fun personDao(): PersonDao

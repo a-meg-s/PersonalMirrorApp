@@ -30,6 +30,8 @@ import java.util.concurrent.Executors
 
 // This class manages the camera and its preview
 class CameraManager(private val context: Context, private val previewView: PreviewView?, private val database: PersonDatabase) {
+    private var userDetected = false
+    private lateinit var imageAnalysis: ImageAnalysis
     private var allUsers: List<Person>? = null
     private var cachedUserFaces: List<Mat>? = null
     private var cachedUserNames: List<String>? = null
@@ -87,20 +89,24 @@ class CameraManager(private val context: Context, private val previewView: Previ
                 it.setSurfaceProvider(previewView?.surfaceProvider)
             }
 
-            val imageAnalysis = ImageAnalysis.Builder()
+            imageAnalysis = ImageAnalysis.Builder()
                 .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
                 .setTargetResolution(android.util.Size(1280,720))
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
 
             imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
-                processImageProxy(imageProxy)
+                if (!userDetected) {  // Step 2: Only process if no user has been detected
+                    processImageProxy(imageProxy)
+                } else {
+                    imageProxy.close()
+                }
             }
 
             try {
                 cameraProvider.unbindAll()
                 // KAMERA UMSTELLEN BEI TABLET (FRONT)/ EMULATOR (BACK)
-                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
                 cameraProvider.bindToLifecycle(
                     context as androidx.lifecycle.LifecycleOwner,
                     cameraSelector,
@@ -187,9 +193,20 @@ class CameraManager(private val context: Context, private val previewView: Previ
                 faceRecognitionNet
             )
             detectedPerson?.let {
+                userDetected = true
                 updatePrimaryUser(allUsers, it)
                 // Person wurde erkannt, also setze den Namen in der Activity
                 setDetectedPerson(it)
+
+                // Unbind image analysis to stop detection
+                val cameraProvider = ProcessCameraProvider.getInstance(context).get()
+                ContextCompat.getMainExecutor(context).execute {
+                    try {
+                        cameraProvider.unbind(imageAnalysis)
+                    } catch (exc: Exception) {
+                        Log.e("CameraManager", "Error unbinding image analysis: ${exc.message}")
+                    }
+                }
             }
 
         } else {

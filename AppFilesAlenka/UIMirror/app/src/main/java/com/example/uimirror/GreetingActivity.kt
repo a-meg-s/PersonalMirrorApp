@@ -79,21 +79,23 @@ class GreetingActivity : AppCompatActivity() {
 
     // Methode zum Aktualisieren des Textes, wenn eine Person erkannt wird evtl.
     fun updateGreeting(personName: String?) {
-        val greetingText = findViewById<TextView>(R.id.greetingTextView)
+        runOnUiThread {
+            val greetingText = findViewById<TextView>(R.id.greetingTextView)
 
-        // Show the appropriate greeting based on whether a name is detected
-        greetingText.text = if (personName == null) {
-            "Versucht Person zu erkennen"
-        } else {
-            "Hallo, $personName"
+            // Show the appropriate greeting based on whether a name is detected
+            greetingText.text = if (personName == "") {
+                "Versucht Person zu erkennen"
+            } else {
+                "Hallo, $personName"
+            }
+
+            // Verzögerung für 5 Sekunden und dann zur MainActivity wechseln
+            Handler(Looper.getMainLooper()).postDelayed({
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }, 5000) // 5000 Millisekunden = 5 Sekunden
         }
-
-        // Verzögerung für 5 Sekunden und dann zur MainActivity wechseln
-        Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }, 5000) // 5000 Millisekunden = 5 Sekunden
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

@@ -22,9 +22,10 @@ class MainActivity : AppCompatActivity() {
     // Spätere Initialisierung der UI-Binding und Kamera-Executor Variablen
     private lateinit var binding: ActivityMainBinding // UI-Bindings für die Aktivität
     private lateinit var cameraManager: CameraManager //Instanz von CameraManager
-    private lateinit var permissionHandler: PermissionHandler // Instanz von PermissionHandler
+    //private lateinit var permissionHandler: PermissionHandler // Instanz von PermissionHandler
     private lateinit var musicPlayer: MusicPlayer // Instanz von MusicPlayer
 
+    /*
     private val database by lazy {
         Room.databaseBuilder(
             applicationContext,
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         ) .fallbackToDestructiveMigration()  // Daten werden bei jeder Versionsänderung gelöscht
             .build()
     }
-
+*/
     // Getter-Methoden für den Zugriff im PermissionHandler
     fun getCameraManager(): CameraManager = cameraManager
     fun getBinding(): ActivityMainBinding = binding
@@ -45,13 +46,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        initializeOpenCV()
+        //initializeOpenCV()
         initializeComponents()
         setupUIListeners()
 
 
         // Berechtigungen beim Start überprüfen
         //requestCameraPermissions()
+        /*
         if(!permissionHandler.isNotificationPermissionGranted()){
             permissionHandler.showPermissionNotificationDeniedDialog()
         }
@@ -59,9 +61,10 @@ class MainActivity : AppCompatActivity() {
         if (!permissionHandler.isStoragePermissionGranted()) {
             permissionHandler.requestStoragePermissions()
         }
+         */
     }
 
-
+/*
     fun initializeOpenCV() {
         //Initialize OpenCVLibrary
         if (OpenCVLoader.initDebug()) {
@@ -72,20 +75,22 @@ class MainActivity : AppCompatActivity() {
             return;
         }
     }
-
+*/
     private fun initializeComponents() {
         // Initialisiere die Klassen für Kamera und Berechtigungen
-        cameraManager = CameraManager(this, binding.previewView, database)
-        permissionHandler = PermissionHandler(this)
+        //cameraManager = CameraManager(this, binding.previewView, database)
+        //permissionHandler = PermissionHandler(this)
         musicPlayer = MusicPlayer(this) // Musikplayer initialisieren
 
         // Berechtigungen beim Start überprüfen
+       /*
         if (permissionHandler.isCameraPermissionGranted()) {
             cameraManager.startCamera()
         } else {
             // Erklären warum Berechtigung benötigt
             permissionHandler.showPermissionCameraDeniedDialog()
         }
+        */
         //musicPlayer.playMainSong()
         if (musicPlayer.isMusicEnabled()) {
             musicPlayer.playMainSong()
@@ -125,12 +130,14 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         // Überprüfen, ob die Berechtigungen erteilt wurden, um die Kamera zu starten
+        /*
         if (permissionHandler.isCameraPermissionGranted()) {
             cameraManager.startCamera()
         } else {
             // Berechtigungen fehlen, Dialog anzeigen
             permissionHandler.showPermissionCameraDeniedDialog()
         }
+        */
 
         // Überprüfen und abspielen des ausgewählten Songs bei rückkehr zur Activity
         if(!musicPlayer.isMainPlaying()) {
@@ -151,10 +158,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     // wird von Android autom. aufgerufen, enn Berechtigungsanfrage bearbeitet wurde.
+    /*
     override fun onRequestPermissionsResult( requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionHandler.handlePermissionsResult(requestCode, grantResults)
     }
+    */
 
     override fun onDestroy() {
         super.onDestroy()
