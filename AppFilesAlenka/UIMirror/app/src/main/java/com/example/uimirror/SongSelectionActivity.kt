@@ -41,7 +41,7 @@ class SongSelectionActivity : AppCompatActivity() {
         setupSongList()
 
         // Inizialisiert Kamera und Permissionhandler (damit Preview funktioniert)
-        cameraManager = CameraManager(this, findViewById(R.id.previewView), database) // Initialisiere CameraManager mit PreviewView
+        cameraManager = CameraManager(this, findViewById(R.id.previewView), database, false) // Initialisiere CameraManager mit PreviewView
         permissionHandler = PermissionHandler(this) // Initialisiere den PermissionHandler hier
 
 

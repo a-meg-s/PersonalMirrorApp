@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 // This class manages the camera and its preview
-class CameraManager(private val context: Context, private val previewView: PreviewView?, private val database: PersonDatabase) {
+class CameraManager(private val context: Context, private val previewView: PreviewView?, private val database: PersonDatabase, private val withImageAnalysis: Boolean = false) {
     private var userDetected = false
     private lateinit var imageAnalysis: ImageAnalysis
     private var allUsers: List<Person>? = null
@@ -89,30 +89,40 @@ class CameraManager(private val context: Context, private val previewView: Previ
                 it.setSurfaceProvider(previewView?.surfaceProvider)
             }
 
-            imageAnalysis = ImageAnalysis.Builder()
-                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
-                .setTargetResolution(android.util.Size(1280,720))
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .build()
+            // Only create imageAnalysis if withImageAnalysis is true
+            if (withImageAnalysis) {
+                imageAnalysis = ImageAnalysis.Builder()
+                    .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
+                    .setTargetResolution(android.util.Size(1280, 720))
+                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                    .build()
 
-            imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
-                if (!userDetected) {  // Step 2: Only process if no user has been detected
-                    processImageProxy(imageProxy)
-                } else {
-                    imageProxy.close()
+                imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
+                    if (!userDetected) {  // Only process if no user has been detected
+                        processImageProxy(imageProxy)
+                    } else {
+                        imageProxy.close()
+                    }
                 }
             }
 
             try {
                 cameraProvider.unbindAll()
-                // KAMERA UMSTELLEN BEI TABLET (FRONT)/ EMULATOR (BACK)
                 val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
                 cameraProvider.bindToLifecycle(
-                    context as androidx.lifecycle.LifecycleOwner,
+                    context as LifecycleOwner,
                     cameraSelector,
-                    preview,
-                    imageAnalysis
+                    preview
                 )
+
+                // Bind imageAnalysis only if needed
+                if (withImageAnalysis) {
+                    cameraProvider.bindToLifecycle(
+                        context as LifecycleOwner,
+                        cameraSelector,
+                        imageAnalysis
+                    )
+                }
             } catch (exc: Exception) {
                 Log.e("CameraManager", "Failed to bind camera: ${exc.message}")
             }

@@ -66,7 +66,7 @@ class GreetingActivity : AppCompatActivity() {
     }
 
     private fun initializeComponents() {
-        cameraManager = CameraManager(this, binding.previewView, database)
+        cameraManager = CameraManager(this, binding.previewView, database, true)
         permissionHandler = PermissionHandler(this)
 
         if (permissionHandler.isCameraPermissionGranted()) {
