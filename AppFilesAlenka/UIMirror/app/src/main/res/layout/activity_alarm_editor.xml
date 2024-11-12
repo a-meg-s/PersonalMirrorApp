@@ -75,11 +75,11 @@
         android:padding="12dp"/>
 
     <Button
-        android:id="@+id/setCancelButton"
+        android:id="@+id/cancelButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/abbrechen"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:padding="12dp" />
             
     </LinearLayout>

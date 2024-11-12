@@ -50,11 +50,6 @@ class AlarmEditorActivity : AppCompatActivity() {
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         createNotificationChannel()
 
-        // Cancel Button
-        binding.setCancelButton.setOnClickListener {
-            finish()
-        }
-
 
         // Set Alarm Button
         binding.setAlarmButton.setOnClickListener {
@@ -63,6 +58,12 @@ class AlarmEditorActivity : AppCompatActivity() {
             } else {
                 requestExactAlarmPermission()
             }
+        }
+
+        
+        // Cancel Button
+        binding.cancelButton.setOnClickListener {
+            finish()
         }
 
 
