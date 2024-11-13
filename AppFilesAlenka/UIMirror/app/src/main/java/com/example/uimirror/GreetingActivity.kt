@@ -109,6 +109,7 @@ class GreetingActivity : AppCompatActivity() {
     }
 
     private suspend fun addPersonsIfNeeded() {
+        //database.personDao().deleteAllPersons()
         val allPersons = getAllPersons()
         if (allPersons.isEmpty()) {
             Log.d("addPersonsIfNeeded", "Users added")
