@@ -1,6 +1,7 @@
 package com.example.uimirror
 
 import android.content.Context
+import android.os.Environment
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -18,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.opencv.core.Core
+import org.opencv.core.Core.ROTATE_180
 import org.opencv.core.Core.ROTATE_90_COUNTERCLOCKWISE
 import org.opencv.core.CvType
 import org.opencv.core.Mat
@@ -173,7 +175,10 @@ class CameraManager(private val context: Context, private val previewView: Previ
         } else {
             Log.d("CameraManager", "bgrMat is successfully created.")
 
+            //Rotation auf Tablet
             Core.rotate(bgrMat, rotatedMat, ROTATE_90_COUNTERCLOCKWISE)
+            //Rotation auf Emulator:
+            //Core.rotate(bgrMat, rotatedMat, ROTATE_180)
 
            // Log.d("processImageProxy", "flippedBGRMat has this many Channels: " + flippedBGRMat.channels().toString() )
 
