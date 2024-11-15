@@ -10,6 +10,7 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.Switch
 import android.widget.TextView
@@ -31,6 +32,8 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+
+        returnToMainActivity()
 
         musicPlayer = MusicPlayer(this)
         permissionHandler = PermissionHandler(this)
@@ -55,6 +58,12 @@ class SettingsActivity : AppCompatActivity() {
         recyclerView.adapter = settingsAdapter
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun returnToMainActivity() {
+        findViewById<Button>(R.id.backToMainButton).setOnClickListener {
+            finish() // Beendet die SongSelectionActivity und kehrt zur MainActivity zurück
+        }
     }
 
     private fun handleCameraPermission(isChecked: Boolean) {

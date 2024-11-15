@@ -99,11 +99,10 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setupUIListeners() {
-        // Setze den OnClickListener für das Settings-Icon
-        binding.settingsIcon?.setOnClickListener {
-            // Zeigt den Dialog an, um zur App-Einstellungsseite weiterzuleiten
-            permissionHandler.showPermissionCameraDeniedDialog()
-            val intent = Intent(this, SettingsActivity::class.java)
+        // Setze den OnClickListener für das Kalender-Icon
+        binding.playIcon?.setOnClickListener {
+            musicPlayer.pauseMainSong()
+            val intent = Intent(this, SongSelectionActivity::class.java)
             startActivity(intent)
         }
 
@@ -112,19 +111,25 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AlarmEditorActivity::class.java)
             startActivity(intent)
         }
+
         // Setze den OnClickListener für das zurück zum Login (mail Icon)
-        binding.mailIcon?.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-
+        binding.calendarIcon?.setOnClickListener {
+            Toast.makeText(this, "Noch keine Funktion, evtl. später Kalender", Toast.LENGTH_LONG).show()
         }
-        // Setze den OnClickListener für das Kalender-Icon
-        binding.playIcon?.setOnClickListener {
-            musicPlayer.pauseMainSong()
-            val intent = Intent(this, SongSelectionActivity::class.java)
-            startActivity(intent)
 
+        // Setze den OnClickListener für das zurück zum Login (mail Icon)
+        binding.somethingIcon?.setOnClickListener {
+            Toast.makeText(this, "Noch keine Funktion, evtl. später Kalender", Toast.LENGTH_LONG).show()
         }
+
+        // Setze den OnClickListener für das Settings-Icon
+        binding.settingsIcon?.setOnClickListener {
+            // Zeigt den Dialog an, um zur App-Einstellungsseite weiterzuleiten
+            //permissionHandler.showPermissionCameraDeniedDialog()
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     override fun onResume() {

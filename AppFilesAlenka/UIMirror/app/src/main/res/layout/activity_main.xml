@@ -55,35 +55,35 @@
                     android:alpha="0.9"
                     android:contentDescription="Alarm"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintBottom_toTopOf="@+id/mailIcon"
+                    app:layout_constraintBottom_toTopOf="@+id/calendarIcon"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:srcCompat="@android:drawable/ic_menu_recent_history" />
 
 
                 <!-- Icon 2 mail (unten rechts) -->
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/mailIcon"
+                    android:id="@+id/calendarIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="100dp"
                     android:alpha="0.9"
-                    android:contentDescription="Mail"
+                    android:contentDescription="calander"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintBottom_toTopOf="@+id/playIcon"
+                    app:layout_constraintBottom_toTopOf="@+id/somethingIcon"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:srcCompat="@android:drawable/ic_dialog_email" />
+                    app:srcCompat="@android:drawable/ic_menu_my_calendar" />
 
 
                 <!-- Icon 1 settings (unter Icon 2) -->
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/settingsIconIcon"
+                    android:id="@+id/somethingIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:alpha="0.9"
                     android:contentDescription="Something"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:srcCompat="@android:drawable/ic_menu_manage" />
+                    app:srcCompat="@android:drawable/ic_menu_help" />
 
         </LinearLayout>
 
