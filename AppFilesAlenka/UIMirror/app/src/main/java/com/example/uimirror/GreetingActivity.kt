@@ -45,11 +45,11 @@ class GreetingActivity : AppCompatActivity() {
         initializeComponents()
 
 
-        binding.root.setOnClickListener {
+       /* binding.root.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
-        }
+        }*/
 
 /*
         val recognizedName = "Alenka"
