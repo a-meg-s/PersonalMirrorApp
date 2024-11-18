@@ -36,6 +36,12 @@ class SongAdapter(
         return SongViewHolder(view) // gibt SongViewHolder-Instanz zurück
     }
 
+    //Setzt Hintergrundfarbe des gespeicherten Songs des Primary Users
+    fun setInitialSelection(savedSongId: Int) {
+        selectedPosition = songs.indexOfFirst { it.resourceId == savedSongId }
+        notifyDataSetChanged()
+    }
+
     // Bindet Daten an ViweHolder-Instanz
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
         val song = songs[holder.adapterPosition] // Holt den Song an der aktuellen Adapter-Position

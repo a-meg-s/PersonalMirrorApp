@@ -40,6 +40,14 @@ class SongSelectionActivity : AppCompatActivity() {
         musicPlayer = MusicPlayer(this)
         setupSongList()
 
+        // setzt Hintergrundfarbe des in DB ausgewählten Songs
+        lifecycleScope.launch {
+            val savedSongId = musicPlayer.loadSelectedSongId()
+            savedSongId?.let {
+                adapter.setInitialSelection(it)  // Wählt den gespeicherten Song aus und färbt den Hintergrund ein
+            }
+        }
+
         // Inizialisiert Kamera und Permissionhandler (damit Preview funktioniert)
         cameraManager = CameraManager(this, findViewById(R.id.previewView), database, false) // Initialisiere CameraManager mit PreviewView
         permissionHandler = PermissionHandler(this) // Initialisiere den PermissionHandler hier
