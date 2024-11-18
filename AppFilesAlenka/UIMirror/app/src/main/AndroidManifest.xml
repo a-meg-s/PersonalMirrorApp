@@ -48,6 +48,14 @@
                 android:value=".MainActivity" />
         </activity>
 
+        <activity
+            android:name=".events.EventsListingActivity"
+            android:parentActivityName=".MainActivity"/>
+
+        <activity
+            android:name=".events.AddEventActivity"
+            android:parentActivityName=".MainActivity"/>
+
         <receiver android:name=".AlarmReceiver" />
     </application>
 

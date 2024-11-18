@@ -12,6 +12,7 @@ import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Music
 import com.example.uimirror.database.models.Person
 import com.example.uimirror.databinding.ActivityMainBinding
+import com.example.uimirror.events.EventsListingActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         initializeComponents()
         setupUIListeners()
         CoroutineScope(Dispatchers.Main).launch {
-            primaryUser = database.personDao().getPrimaryUser(true)!!
+            primaryUser = database.uiMirrorDao().getPrimaryUser(true)!!
             ckeckforAGB()
         }
 
@@ -121,7 +122,8 @@ class MainActivity : AppCompatActivity() {
 
         // Setze den OnClickListener für das zurück zum Login (mail Icon)
         binding.calendarIcon?.setOnClickListener {
-            Toast.makeText(this, "Noch keine Funktion, evtl. später Kalender", Toast.LENGTH_LONG).show()
+            val intent = Intent(this, EventsListingActivity::class.java)
+            startActivity(intent)
         }
 
         // Setze den OnClickListener für das zurück zum Login (mail Icon)
@@ -137,8 +139,8 @@ class MainActivity : AppCompatActivity() {
                 .setPositiveButton("Logout") { dialog, _ ->
                     dialog.dismiss()
                     CoroutineScope(Dispatchers.Main).launch {
-                        Log.e("logout", "isPrimaryUser: ${primaryUser?.isPrimaryUser}")
-                        val primaryUser = database.personDao().getPrimaryUser(true)
+                        Log.e("logout", "isPrimaryUser: ${primaryUser.isPrimaryUser}")
+                        val primaryUser = database.uiMirrorDao().getPrimaryUser(true)
                         primaryUser?.isPrimaryUser = false
                         Log.e("logout", "isPrimaryUser: ${primaryUser?.isPrimaryUser}")
                     }
@@ -214,10 +216,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun ckeckforAGB(){
         CoroutineScope(Dispatchers.Main).launch {
-            Log.e("logout", "isPrimaryUser: ${primaryUser?.isPrimaryUser}")
-            val primaryUser = database.personDao().getPrimaryUser(true)
-            if (primaryUser?.isAGBread != null && primaryUser?.isAGBread != true) {
-                Log.i("CheckAGB", "AGB checked: ${primaryUser?.isAGBread}")
+            Log.e("logout", "isPrimaryUser: ${primaryUser.isPrimaryUser}")
+            val primaryUser = database.uiMirrorDao().getPrimaryUser(true)
+            if (primaryUser?.isAGBread != null && primaryUser.isAGBread != true) {
+                Log.i("CheckAGB", "AGB checked: ${primaryUser.isAGBread}")
                  MaterialAlertDialogBuilder(this@MainActivity)
                 .setTitle("Datenschutz & Nutzungsbedingungen")
                 .setMessage(
@@ -232,8 +234,8 @@ class MainActivity : AppCompatActivity() {
                 .setPositiveButton("OK") { dialog, _ ->
                     dialog.dismiss()
                     CoroutineScope(Dispatchers.Main).launch {
-                    primaryUser?.isAGBread = true
-                    database.personDao().updatePerson(primaryUser)
+                    primaryUser.isAGBread = true
+                    database.uiMirrorDao().updatePerson(primaryUser)
                 }
                 }
                 .setCancelable(false)

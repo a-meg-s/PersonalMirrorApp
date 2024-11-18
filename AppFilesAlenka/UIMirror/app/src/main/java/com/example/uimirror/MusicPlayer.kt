@@ -56,7 +56,7 @@ class MusicPlayer(private val context: Context) {
     }
     private fun loadPrimaryUser() : Person? {
         return runBlocking {
-            val primaryUser = database.personDao().getPrimaryUser(true)
+            val primaryUser = database.uiMirrorDao().getPrimaryUser(true)
             Log.d("CameraManager", "Cached ${primaryUser?.name} users from database.")
             primaryUser
         }
@@ -71,7 +71,7 @@ class MusicPlayer(private val context: Context) {
             //val primaryUser = database.personDao().getPrimaryUser(true)
             primaryUser?.let {
                 // Speichere die Song-ID und Position für den Primary User in der Datenbank
-                database.personDao().updateSongData(it.id, songId, 0) // 0 ist der Startpunkt der Position
+                database.uiMirrorDao().updateSongData(it.id, songId, 0) // 0 ist der Startpunkt der Position
             }
         }
     }
@@ -163,10 +163,10 @@ class MusicPlayer(private val context: Context) {
         mainPlayer?.let {
             currentPosition = it.currentPosition // Speichere die aktuelle Position
             coroutineScope.launch {
-                val primaryUser = database.personDao().getPrimaryUser(true)
+                val primaryUser = database.uiMirrorDao().getPrimaryUser(true)
                 primaryUser?.let {
                     // Aktualisiere die Position des Songs in der Datenbank
-                    database.personDao().updateSongData(it.id, currentMainSongId, currentPosition)
+                    database.uiMirrorDao().updateSongData(it.id, currentMainSongId, currentPosition)
                 }
             }
             it.pause() // Pausiere den Song
@@ -177,7 +177,7 @@ class MusicPlayer(private val context: Context) {
 
     fun resumeMainSong() {
         coroutineScope.launch {
-            val primaryUser = database.personDao().getPrimaryUser(true)
+            val primaryUser = database.uiMirrorDao().getPrimaryUser(true)
             primaryUser?.let { user ->
                 // Hole die gespeicherten Song-Daten
                 val songId = primaryUser.selectedSongId
@@ -217,11 +217,11 @@ class MusicPlayer(private val context: Context) {
 
     fun setMusicEnabled(enabled: Boolean) {
         coroutineScope.launch {
-            val primaryUser = database.personDao().getPrimaryUser(true)
+            val primaryUser = database.uiMirrorDao().getPrimaryUser(true)
             primaryUser?.let {
                 // Setze den Musikstatus des Benutzers
                 it.isMusicEnabled = enabled
-                database.personDao().updatePerson(it) // Stelle sicher, dass die DAO-Methode für das Update korrekt ist
+                database.uiMirrorDao().updatePerson(it) // Stelle sicher, dass die DAO-Methode für das Update korrekt ist
                 Log.d("setMusicEnabled", "Primary User isMusicEnabled:  ${primaryUser?.isMusicEnabled} ${primaryUser?.name}")
             }
         }

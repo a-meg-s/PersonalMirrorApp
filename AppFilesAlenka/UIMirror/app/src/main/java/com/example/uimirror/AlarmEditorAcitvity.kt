@@ -113,10 +113,10 @@ class AlarmEditorActivity : AppCompatActivity() {
 
         lifecycle.coroutineScope.launch {
             val allPersons = getAllPersons()
-            primaryUser = database.personDao().getPrimaryUser(true) ?: allPersons.first()
+            primaryUser = database.uiMirrorDao().getPrimaryUser(true) ?: allPersons.first()
             primaryUser.alarm = Alarm(dateTime = time)
 
-            database.personDao().insertPerson(primaryUser)
+            database.uiMirrorDao().insertPerson(primaryUser)
         }
 
 
@@ -125,7 +125,7 @@ class AlarmEditorActivity : AppCompatActivity() {
     }
 
     suspend fun getAllPersons(): List<Person> {
-        val persons = database.personDao().getAllPersons()
+        val persons = database.uiMirrorDao().getAllPersons()
         if (persons.isEmpty()) {
             Toast.makeText(this, "Inserting Users", Toast.LENGTH_SHORT).show()
         }

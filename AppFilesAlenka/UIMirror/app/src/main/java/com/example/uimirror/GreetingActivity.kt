@@ -130,12 +130,12 @@ class GreetingActivity : AppCompatActivity() {
                 Person(id = 3, name = "Nico", faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Nico_Face.jpg"))),
                 Person(id = 4, name = "Andrea", faceData = matToByteArray(AssetManager.loadImageFromAssets(this, "Andrea_Face.jpg")))
             )
-            database.personDao().insertAll(users)
+            database.uiMirrorDao().insertAll(users)
         }
     }
 
     private suspend fun getAllPersons(): List<Person> {
-        val persons = database.personDao().getAllPersons()
+        val persons = database.uiMirrorDao().getAllPersons()
         if (persons.isEmpty()) {
             Toast.makeText(this, "Inserting Users", Toast.LENGTH_SHORT).show()
         }

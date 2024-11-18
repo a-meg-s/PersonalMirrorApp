@@ -237,7 +237,7 @@ class CameraManager(private val context: Context, private val previewView: Previ
 
             // Save updated list to database
             CoroutineScope(Dispatchers.IO).launch {
-                database.personDao().insertAll(allUsers)
+                database.uiMirrorDao().insertAll(allUsers)
             }
         }
 
@@ -245,7 +245,7 @@ class CameraManager(private val context: Context, private val previewView: Previ
 
     private fun cacheUsers(): List<Person>? {
         return runBlocking {
-            val allUsers = database.personDao().getAllPersons()
+            val allUsers = database.uiMirrorDao().getAllPersons()
             Log.d("CameraManager", "Cached ${allUsers.size} users from database.")
             allUsers
         }

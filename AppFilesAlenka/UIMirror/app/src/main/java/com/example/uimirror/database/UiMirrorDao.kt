@@ -1,11 +1,11 @@
 package com.example.uimirror.database
 
-import android.database.Cursor
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.example.uimirror.database.models.Event
 import com.example.uimirror.database.models.Person
 
 @Dao
@@ -46,6 +46,14 @@ interface PersonDao {
     @Update
     suspend fun updatePerson(person: Person)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertEvent(event: Event)
+
+    @Query("SELECT * FROM Event")
+    suspend fun getAllEvents(): List<Event>
+
+    @Query("DELETE FROM Event WHERE id = :id")
+    suspend fun deleteEvent(id: Int)
 }
 
 data class SongData(
