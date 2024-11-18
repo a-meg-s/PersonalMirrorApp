@@ -102,6 +102,17 @@ class GreetingActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionHandler.handlePermissionsResult(requestCode, grantResults)
     }
+    override fun onResume() {
+        super.onResume()
+        // Überprüfen, ob die Berechtigungen erteilt wurden, um die Kamera zu starten
+
+        if (permissionHandler.isCameraPermissionGranted()) {
+            cameraManager.startCamera()
+        } else {
+            // Berechtigungen fehlen, Dialog anzeigen
+            permissionHandler.showPermissionCameraDeniedDialog()
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()
