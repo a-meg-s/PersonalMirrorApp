@@ -52,6 +52,10 @@ class MainActivity : AppCompatActivity() {
         //initializeOpenCV()
         initializeComponents()
         setupUIListeners()
+        CoroutineScope(Dispatchers.Main).launch {
+            primaryUser = database.personDao().getPrimaryUser(true)!!
+            ckeckforAGB()
+        }
 
 
         // Berechtigungen beim Start überprüfen
@@ -206,6 +210,36 @@ class MainActivity : AppCompatActivity() {
     // Neue Methode zum Anzeigen einer Benachrichtigung
     fun showNotification(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun ckeckforAGB(){
+        CoroutineScope(Dispatchers.Main).launch {
+            Log.e("logout", "isPrimaryUser: ${primaryUser?.isPrimaryUser}")
+            val primaryUser = database.personDao().getPrimaryUser(true)
+            if (primaryUser?.isAGBread != null && primaryUser?.isAGBread != true) {
+                Log.i("CheckAGB", "AGB checked: ${primaryUser?.isAGBread}")
+                 MaterialAlertDialogBuilder(this@MainActivity)
+                .setTitle("Datenschutz & Nutzungsbedingungen")
+                .setMessage(
+                    "Danke, dass du unsere App nutzt! Hier sind einige wichtige Informationen zum Datenschutz und zur Nutzung:\n\n" +
+                            "1. **Datenspeicherung:** Alle von dir eingegebenen Daten, wie z. B. persönliche Einstellungen und Präferenzen, werden sicher auf deinem Gerät in einer lokalen Room-Datenbank gespeichert. Diese Daten bleiben nur auf deinem Gerät und werden nicht an externe Server weitergegeben.\n\n" +
+                            "2. **Datensicherung:** Deine Daten werden automatisch gesichert und verschlüsselt, um ihre Sicherheit zu gewährleisten. So stellen wir sicher, dass deine Informationen geschützt sind und keine unbefugten Zugriffe möglich sind.\n\n" +
+                            "3. **Berechtigungen:** Für die Nutzung der App benötigen wir bestimmte Berechtigungen, z. B. den Zugriff auf Kamera und Speicher. Diese Berechtigungen werden ausschließlich für die Funktionen der App genutzt und nicht für andere Zwecke verwendet.\n\n" +
+                            "4. **Datenlöschung:** Du kannst jederzeit auf deine gespeicherten Daten zugreifen und diese in den App-Einstellungen löschen. Wir speichern deine Daten nur so lange, wie es für den Betrieb der App erforderlich ist.\n\n" +
+                            "5. **Verantwortung:** Obwohl wir alle notwendigen Sicherheitsvorkehrungen getroffen haben, bist du für die Sicherheit deiner Daten verantwortlich. Wir übernehmen keine Haftung für unbefugten Zugriff oder Datenverlust, der außerhalb unserer Kontrolle liegt.\n\n" +
+                            "Indem du auf 'OK' klickst, bestätigst du, dass du diese Informationen zur Kenntnis genommen hast."
+                )
+                .setPositiveButton("OK") { dialog, _ ->
+                    dialog.dismiss()
+                    CoroutineScope(Dispatchers.Main).launch {
+                    primaryUser?.isAGBread = true
+                    database.personDao().updatePerson(primaryUser)
+                }
+                }
+                .setCancelable(false)
+                .show()
+            }
+        }
     }
 
 }
