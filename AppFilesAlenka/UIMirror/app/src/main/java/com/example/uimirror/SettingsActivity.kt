@@ -57,7 +57,8 @@ class SettingsActivity : AppCompatActivity() {
 
         // Karten für Benutzer hinzufügen
         addUserCard.setOnClickListener {
-            // Benutzer hinzufügen Logik hier
+            val intent = Intent(this, AddUserActivity::class.java)
+            startActivity(intent)
             Toast.makeText(this, "Benutzer hinzufügen", Toast.LENGTH_SHORT).show()
         }
 

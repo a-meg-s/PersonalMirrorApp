@@ -110,7 +110,7 @@ class CameraManager(private val context: Context, private val previewView: Previ
 
             try {
                 cameraProvider.unbindAll()
-                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
                 cameraProvider.bindToLifecycle(
                     context as LifecycleOwner,
                     cameraSelector,
@@ -176,9 +176,9 @@ class CameraManager(private val context: Context, private val previewView: Previ
             Log.d("CameraManager", "bgrMat is successfully created.")
 
             //Rotation auf Tablet
-            //Core.rotate(bgrMat, rotatedMat, ROTATE_90_COUNTERCLOCKWISE)
+            Core.rotate(bgrMat, rotatedMat, ROTATE_90_COUNTERCLOCKWISE)
             //Rotation auf Emulator:
-            Core.rotate(bgrMat, rotatedMat, ROTATE_180)
+            //Core.rotate(bgrMat, rotatedMat, ROTATE_180)
 
            // Log.d("processImageProxy", "flippedBGRMat has this many Channels: " + flippedBGRMat.channels().toString() )
 

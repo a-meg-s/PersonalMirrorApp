@@ -56,6 +56,14 @@
             android:name=".events.AddEventActivity"
             android:parentActivityName=".MainActivity"/>
 
+        <activity
+            android:name=".AddUserActivity"
+            android:parentActivityName=".SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".SettingsActivity" />
+        </activity>
+
         <receiver android:name=".AlarmReceiver" />
     </application>
 
