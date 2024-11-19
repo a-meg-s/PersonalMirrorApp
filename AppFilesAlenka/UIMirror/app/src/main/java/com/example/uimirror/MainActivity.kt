@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        //initializeOpenCV()
+        initializeOpenCV()
         initializeComponents()
         setupUIListeners()
         CoroutineScope(Dispatchers.Main).launch {
@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-/*
+
     fun initializeOpenCV() {
         //Initialize OpenCVLibrary
         if (OpenCVLoader.initDebug()) {
@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
             return;
         }
     }
-*/
+
     private fun initializeComponents() {
         // Initialisiere die Klassen für Kamera und Berechtigungen
         cameraManager = CameraManager(this, binding.previewView, database, false)
