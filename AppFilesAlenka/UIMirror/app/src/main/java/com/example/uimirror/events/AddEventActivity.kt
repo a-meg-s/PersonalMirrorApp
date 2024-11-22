@@ -14,6 +14,7 @@ import androidx.room.Room
 import com.example.uimirror.R
 import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Event
+import com.example.uimirror.database.models.Person
 import com.example.uimirror.databinding.ActivityAddEventBinding
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -32,6 +33,7 @@ class AddEventActivity : AppCompatActivity() {
             "person_database"
         ).build()
     }
+    private lateinit var primaryUser: Person
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +43,10 @@ class AddEventActivity : AppCompatActivity() {
         calendarView = findViewById<CalendarView>(R.id.calendarView)
         val tvTimeSet = findViewById<TextView>(R.id.tvTimeSet)
         calendarView?.minDate = Calendar.getInstance().timeInMillis
-
+        lifecycle.coroutineScope.launch {
+            val allPersons = getAllPersons()
+            primaryUser = database.uiMirrorDao().getPrimaryUser(true) ?: allPersons.first()
+        }
         tvTimeSet.visibility = View.VISIBLE
         tvTimeSet.text = "Event set for ${readDate(calendar.timeInMillis)}"
 
@@ -73,7 +78,8 @@ class AddEventActivity : AppCompatActivity() {
                 } else {
                     lifecycle.coroutineScope.launch {
                         val event = Event(dateTime = calendar.timeInMillis, eventName = it.toString())
-                        database.uiMirrorDao().insertEvent(event)
+                        primaryUser.events.add(event)
+                        database.uiMirrorDao().insertPerson(primaryUser)
                         Toast.makeText(this@AddEventActivity, "Event Created!", Toast.LENGTH_SHORT).show();
                         finish()
                     }
@@ -82,6 +88,10 @@ class AddEventActivity : AppCompatActivity() {
         }
     }
 
+    suspend fun getAllPersons(): List<Person> {
+        val persons = database.uiMirrorDao().getAllPersons()
+        return persons
+    }
 
     private fun readDate(time: Long): String? {
         val formatter = SimpleDateFormat("dd MMM yyyy, hh:mm a")

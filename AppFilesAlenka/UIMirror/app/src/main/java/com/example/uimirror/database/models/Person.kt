@@ -10,6 +10,7 @@ data class Person(
     var name: String,
     var faceData: ByteArray,
     var alarm: Alarm? = null,
+    var events: MutableList<Event> = mutableListOf(),
     var selectedSongId: Int? = null, // ID des ausgewählten Songs für die Person
     var songPosition: Int = 0, // Fortschritt oder Position im Song
     var isMusicEnabled: Boolean = true,

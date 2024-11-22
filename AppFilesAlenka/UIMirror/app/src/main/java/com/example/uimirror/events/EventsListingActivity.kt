@@ -15,6 +15,7 @@ import androidx.room.Room
 import com.example.uimirror.R
 import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Event
+import com.example.uimirror.database.models.Person
 import com.example.uimirror.databinding.ActivityEventsBinding
 import kotlinx.coroutines.launch
 
@@ -30,6 +31,7 @@ class EventsListingActivity : AppCompatActivity(), EventsAdapter.EventsClickInte
             "person_database"
         ).build()
     }
+    private lateinit var primaryUser: Person
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,10 +61,17 @@ class EventsListingActivity : AppCompatActivity(), EventsAdapter.EventsClickInte
     override fun onResume() {
         super.onResume()
         lifecycle.coroutineScope.launch {
-            eventsList = database.uiMirrorDao().getAllEvents().toMutableList()
+            val allPersons = getAllPersons()
+            primaryUser = database.uiMirrorDao().getPrimaryUser(true) ?: allPersons.first()
+            eventsList = primaryUser.events
             adapter.updateList(eventsList)
             toggleEmptyListText(eventsList)
         }
+    }
+
+    suspend fun getAllPersons(): List<Person> {
+        val persons = database.uiMirrorDao().getAllPersons()
+        return persons
     }
 
     private fun toggleEmptyListText(events: List<Event>) {

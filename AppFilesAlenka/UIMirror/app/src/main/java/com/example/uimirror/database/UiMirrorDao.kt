@@ -46,11 +46,11 @@ interface PersonDao {
     @Update
     suspend fun updatePerson(person: Person)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertEvent(event: Event)
+   /* @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertEvent(event: Event)*/
 
-    @Query("SELECT * FROM Event")
-    suspend fun getAllEvents(): List<Event>
+    /*@Query("SELECT * FROM Event")
+    suspend fun getAllEvents(): List<Event>*/
 
     @Query("DELETE FROM Event WHERE id = :id")
     suspend fun deleteEvent(id: Int)
