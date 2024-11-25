@@ -45,9 +45,17 @@ class AddUserActivity : AppCompatActivity() {
     private lateinit var buttonAddUser: Button
     private lateinit var buttonRetryDetection: Button
 
+    // Kamera, Musik
+    private lateinit var musicPlayer: MusicPlayer
+    private lateinit var permissionHandler: PermissionHandler
+    private lateinit var cameraManager: CameraManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_user)
+
+        musicPlayer = (applicationContext as MyApp).musicPlayer
+        permissionHandler = PermissionHandler(this)
 
         Companion.loadModels(this)
 
@@ -63,9 +71,22 @@ class AddUserActivity : AppCompatActivity() {
         recyclerView.adapter = FacesAdapter(detectedFaces, ::onFaceSelected)
 
         buttonAddUser.setOnClickListener { addUserToDatabase() }
-        buttonRetryDetection.setOnClickListener { retryFaceDetection() }
+        buttonRetryDetection.setOnClickListener { retryFaceDetection()
 
-        startCamera()
+        }
+
+        //startCamera()
+        // Initialisiere Kamera und Permissionhandler (damit Preview funktioniert)
+        cameraManager = CameraManager(this, findViewById(R.id.previewView), database, false)
+
+        permissionHandler = PermissionHandler(this)
+
+        // Kamera starten, wenn Berechtigung gewährt ist
+        if (permissionHandler.isCameraPermissionGranted()) {
+            cameraManager.startCamera()
+        } else {
+            permissionHandler.showPermissionCameraDeniedDialog()
+        }
     }
 
     private val database by lazy {

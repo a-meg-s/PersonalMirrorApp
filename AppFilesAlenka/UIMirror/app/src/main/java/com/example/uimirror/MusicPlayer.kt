@@ -1,5 +1,6 @@
 package com.example.uimirror
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.media.MediaPlayer
@@ -160,7 +161,9 @@ class MusicPlayer(private val context: Context) {
 
 
     fun pauseMainSong() {
+        Log.i("PauseMainsong", "mainPlayer")
         mainPlayer?.let {
+            Log.i("PauseMainSong", "wird pausiert")
             currentPosition = it.currentPosition // Speichere die aktuelle Position
             coroutineScope.launch {
                 val primaryUser = database.uiMirrorDao().getPrimaryUser(true)
@@ -170,6 +173,7 @@ class MusicPlayer(private val context: Context) {
                 }
             }
             it.pause() // Pausiere den Song
+            Log.i("PauseMainSong", "pausiert")
         }
         isMainPlaying = false
     }

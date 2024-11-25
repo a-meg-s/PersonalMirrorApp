@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.widget.ImageView
 import android.widget.Switch
 import android.widget.TextView
@@ -14,6 +15,9 @@ import androidx.room.Room
 import com.example.uimirror.database.PersonDatabase
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.cardview.widget.CardView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -34,7 +38,7 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        musicPlayer = MusicPlayer(this)
+        musicPlayer = (applicationContext as MyApp).musicPlayer
         permissionHandler = PermissionHandler(this)
 
         // UI-Elemente initialisieren
@@ -42,6 +46,7 @@ class SettingsActivity : AppCompatActivity() {
         val addUserCard = findViewById<CardView>(R.id.addUserCard)
         val deactivateMusicCard = findViewById<CardView>(R.id.deactivateMusicCard)
         val deleteUserDataCard = findViewById<CardView>(R.id.deleteUserDataCard)
+        val deleteUserCard = findViewById<CardView>(R.id.deleteUserCard)
 
         val musicSwitch = findViewById<Switch>(R.id.musicSwitch)
 
@@ -65,8 +70,56 @@ class SettingsActivity : AppCompatActivity() {
         // Karten für Benutzerdaten löschen
         deleteUserDataCard.setOnClickListener {
             // Benutzerdaten löschen Logik hier
-            Toast.makeText(this, "Benutzerdaten löschen", Toast.LENGTH_SHORT).show()
+             MaterialAlertDialogBuilder(this)
+                 .setTitle("Reset")
+                 .setMessage("Sind Sie sich ganz sicher das Sie ihre Daten löschen wollen? \n")
+                 .setPositiveButton("reset") { dialog, _ ->
+                     dialog.dismiss()
+                     musicPlayer.pauseMainSong()
+                     CoroutineScope(Dispatchers.Main).launch {
+                         val primaryUser = database.uiMirrorDao().getPrimaryUser(true)
+                         primaryUser?.let{
+                             database.uiMirrorDao().resetPrimaryUser(it.id)
+                             it.events.clear()
+                             //database.uiMirrorDao().updatePerson(it) //updatet es falsch?
+                         }
+                         Log.e("DeleteUser", "isPrimaryUser: ${primaryUser?.name}")
+
+                     }
+                     Toast.makeText(this, "Benutzerdaten wurden gelöscht", Toast.LENGTH_SHORT).show()
+
+                 }
+                 .setNegativeButton("Abbrechen") { dialog, _ ->
+                     dialog.dismiss()
+                 }
+                 .setCancelable(false)
+                 .show()
         }
+
+        // User löschen
+        deleteUserCard.setOnClickListener {
+            MaterialAlertDialogBuilder(this)
+                 .setTitle("Daten löschen")
+                 .setMessage("Sind Sie sich ganz sicher das Sie ihre Daten löschen wollen? \n Sobald Sie es bestätigen werden alle Daten über sie gelöscht inkl. ihrem Bild. \n Sie werden automatisch ausgeloggt und können sich nicht mehr einloggen, da Ihr Gesicht nicht mehr registriert ist. ")
+                 .setPositiveButton("löschen") { dialog, _ ->
+                     dialog.dismiss()
+                     musicPlayer.pauseMainSong()
+                     CoroutineScope(Dispatchers.Main).launch {
+                         val primaryUser = database.uiMirrorDao().getPrimaryUser(true)
+                         database.uiMirrorDao().deletePrimaryUser()
+                         Log.e("DeleteUser", "isPrimaryUser: ${primaryUser?.name}")
+                     }
+                     val intent = Intent(this, LoginActivity::class.java)
+                     startActivity(intent)
+
+                 }
+                 .setNegativeButton("Abbrechen") { dialog, _ ->
+                     dialog.dismiss()
+                 }
+                 .setCancelable(false)
+                 .show()
+        }
+
 
         // Initialisiere Kamera und Permissionhandler (damit Preview funktioniert)
         cameraManager = CameraManager(this, findViewById(R.id.previewView), database, false)
@@ -84,10 +137,13 @@ class SettingsActivity : AppCompatActivity() {
     private fun handleSongPermission(isChecked: Boolean) {
         if (isChecked) {
             musicPlayer.setMusicEnabled(true)
+            if (!musicPlayer.isMainPlaying()) {
+                musicPlayer.playMainSong()
+            }
             Toast.makeText(this, "Hauptmusik aktiviert", Toast.LENGTH_SHORT).show()
         } else {
-            musicPlayer.setMusicEnabled(false)
             musicPlayer.pauseMainSong()
+            musicPlayer.setMusicEnabled(false)
             Toast.makeText(this, "Hauptmusik deaktiviert", Toast.LENGTH_SHORT).show()
         }
     }
