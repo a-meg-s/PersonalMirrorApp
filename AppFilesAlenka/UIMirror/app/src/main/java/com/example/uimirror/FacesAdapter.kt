@@ -22,10 +22,15 @@ class FacesAdapter(
 
     override fun onBindViewHolder(holder: FaceViewHolder, position: Int) {
         val mat = faces[position]
-        val bitmap = null
+        val bitmap = android.graphics.Bitmap.createBitmap(
+            mat.cols(), mat.rows(), android.graphics.Bitmap.Config.ARGB_8888
+        )
         matToBitmap(mat, bitmap) // Convert Mat to Bitmap
         holder.imageView.setImageBitmap(bitmap)
-        holder.imageView.setOnClickListener { onFaceClick(position) }
+
+        holder.imageView.setOnClickListener {
+            onFaceClick(position)  // This invokes the onFaceSelected callback in AddUserActivity
+        }
     }
 
     override fun getItemCount() = faces.size

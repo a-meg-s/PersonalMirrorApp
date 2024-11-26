@@ -38,6 +38,7 @@ class GreetingActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         lifecycle.coroutineScope.launch {
+            database.uiMirrorDao().deletePersonsByName("nicotest")
             addPersonsIfNeeded()
         }
 

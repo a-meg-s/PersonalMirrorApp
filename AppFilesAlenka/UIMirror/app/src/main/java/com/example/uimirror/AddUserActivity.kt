@@ -1,10 +1,12 @@
 package com.example.uimirror
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -38,6 +40,7 @@ class AddUserActivity : AppCompatActivity() {
     private val detectedFaces = mutableListOf<Mat>() // List of detected faces
     private var selectedFaceIndex: Int? = null
 
+
     private lateinit var imageAnalysis: ImageAnalysis
     private lateinit var previewView: PreviewView
     private lateinit var recyclerView: RecyclerView
@@ -48,7 +51,6 @@ class AddUserActivity : AppCompatActivity() {
     // Kamera, Musik
     private lateinit var musicPlayer: MusicPlayer
     private lateinit var permissionHandler: PermissionHandler
-    private lateinit var cameraManager: CameraManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +59,7 @@ class AddUserActivity : AppCompatActivity() {
         musicPlayer = (applicationContext as MyApp).musicPlayer
         permissionHandler = PermissionHandler(this)
 
-        Companion.loadModels(this)
+        loadModels(this)
 
         previewView = findViewById(R.id.previewView)
         previewView = findViewById(R.id.previewView)
@@ -68,22 +70,19 @@ class AddUserActivity : AppCompatActivity() {
 
         // Initialize RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        recyclerView.adapter = FacesAdapter(detectedFaces, ::onFaceSelected)
-
-        buttonAddUser.setOnClickListener { addUserToDatabase() }
-        buttonRetryDetection.setOnClickListener { retryFaceDetection()
-
+        recyclerView.adapter = FacesAdapter(detectedFaces) { position ->
+            // This lambda will handle face selection logic in the adapter
+            onFaceSelected(position)
         }
 
-        //startCamera()
-        // Initialisiere Kamera und Permissionhandler (damit Preview funktioniert)
-        cameraManager = CameraManager(this, findViewById(R.id.previewView), database, false)
+        buttonAddUser.setOnClickListener { addUserToDatabase() }
+        buttonRetryDetection.setOnClickListener { retryFaceDetection()}
 
         permissionHandler = PermissionHandler(this)
 
         // Kamera starten, wenn Berechtigung gewährt ist
         if (permissionHandler.isCameraPermissionGranted()) {
-            cameraManager.startCamera()
+            startCamera()
         } else {
             permissionHandler.showPermissionCameraDeniedDialog()
         }
@@ -218,10 +217,18 @@ class AddUserActivity : AppCompatActivity() {
 
     private fun detectAndCropFaces(mat: Mat) {
         val faces = FaceDetection.detectAndCropFaceOpenCV(mat, faceDetector)
-        faces?.let {
-            detectedFaces.clear()
-            detectedFaces.addAll(it)
-            recyclerView.adapter?.notifyDataSetChanged()
+
+        if (faces != null && faces.isNotEmpty()) {
+            runOnUiThread {
+                detectedFaces.clear()  // Clear any previous faces
+                detectedFaces.addAll(faces)  // Add the new faces to the list
+                recyclerView.adapter?.notifyDataSetChanged()  // Notify the adapter to update the RecyclerView
+            }
+
+            faceDetected = true  // Set the flag only when faces are detected
+        } else {
+            // If no faces were detected, ensure faceDetected is false
+            faceDetected = false
         }
     }
     private fun onFaceSelected(index: Int) {
@@ -247,6 +254,15 @@ class AddUserActivity : AppCompatActivity() {
 
         lifecycle.coroutineScope.launch {
             database.uiMirrorDao().insertPerson(newUser)
+
+            // Show a success message after user is added
+            runOnUiThread {
+                Toast.makeText(this@AddUserActivity, "User added successfully!", Toast.LENGTH_SHORT).show()
+            }
+
+            // Delay and then open SettingsActivity
+            kotlinx.coroutines.delay(2000) // 2 seconds delay
+            finish()  // Optionally, close AddUserActivity
         }
     }
     private fun retryFaceDetection() {
