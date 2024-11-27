@@ -151,6 +151,13 @@ class SettingsActivity : AppCompatActivity() {
         super.onResume()
         // Hier kannst du die Berechtigungen überprüfen und den Zustand der Schalter aktualisieren
         updateSettingsState()
+
+        // Kamera starten, wenn Berechtigung gewährt ist
+        if (permissionHandler.isCameraPermissionGranted()) {
+            cameraManager.startCamera()
+        } else {
+            permissionHandler.showPermissionCameraDeniedDialog()
+        }
     }
 
     private fun updateSettingsState() {

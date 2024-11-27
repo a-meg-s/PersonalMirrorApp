@@ -40,6 +40,9 @@ interface PersonDao {
     @Query("DELETE FROM Person WHERE isPrimaryUser = 1")
     suspend fun deletePrimaryUser()
 
+    @Query("DELETE FROM PERSON WHERE name = :name")
+    suspend fun deletePersonsByName(name: String)
+
     @Query("UPDATE Person SET alarm = null, selectedSongId = null, songPosition = 0, isMusicEnabled = 1, isAGBread = 0 WHERE id = :personId")
     suspend fun resetPrimaryUser(personId: Int)
 
