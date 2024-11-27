@@ -1,18 +1,13 @@
-package com.example.uimirror
+package com.example.uimirror.musik
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
 import android.media.MediaPlayer
 import android.util.Log
 import android.os.Handler
 import android.os.Looper
-import android.widget.ImageButton
 import androidx.room.Room
 import com.example.uimirror.database.PersonDatabase
-import androidx.lifecycle.coroutineScope
 import com.example.uimirror.database.models.Person
-import com.example.uimirror.databinding.ActivityAlarmEditorBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

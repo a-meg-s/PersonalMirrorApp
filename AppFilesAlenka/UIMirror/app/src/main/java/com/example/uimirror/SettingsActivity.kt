@@ -1,12 +1,8 @@
 package com.example.uimirror
 
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
-import android.widget.ImageView
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
@@ -15,6 +11,8 @@ import androidx.room.Room
 import com.example.uimirror.database.PersonDatabase
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.cardview.widget.CardView
+import com.example.uimirror.musik.MusicPlayer
+import com.example.uimirror.musik.MyApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

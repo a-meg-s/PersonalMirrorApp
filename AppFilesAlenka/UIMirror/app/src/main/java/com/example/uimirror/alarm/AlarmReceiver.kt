@@ -1,4 +1,4 @@
-package com.example.uimirror
+package com.example.uimirror.alarm
 
 
 import android.content.Context
@@ -8,6 +8,7 @@ import android.app.NotificationManager
 import android.os.Build
 import android.content.BroadcastReceiver
 import androidx.core.app.NotificationCompat
+import com.example.uimirror.R
 
 const val notificationId = 1
 const val channelId = "alarm_channel"

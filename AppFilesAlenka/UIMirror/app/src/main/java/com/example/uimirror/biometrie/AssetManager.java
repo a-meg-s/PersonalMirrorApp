@@ -1,10 +1,9 @@
-package com.example.uimirror;
+package com.example.uimirror.biometrie;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.os.Environment;
 import android.util.Log;
 
 import androidx.exifinterface.media.ExifInterface;

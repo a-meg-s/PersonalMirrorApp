@@ -1,7 +1,6 @@
 package com.example.uimirror
 
 import android.content.Context
-import android.os.Environment
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -11,16 +10,18 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProvider
+import com.example.uimirror.biometrie.AssetManager
+import com.example.uimirror.biometrie.FaceDetection
+import com.example.uimirror.biometrie.FaceRecognition
 import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Person
+import com.example.uimirror.biometrie.byteArrayToMat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.opencv.core.Core
 import org.opencv.core.Core.ROTATE_180
-import org.opencv.core.Core.ROTATE_90_COUNTERCLOCKWISE
 import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.dnn.Dnn

@@ -1,22 +1,13 @@
-package com.example.uimirror;
+package com.example.uimirror.biometrie;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.util.Log;
-
-import androidx.exifinterface.media.ExifInterface;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.dnn.Dnn;
 import org.opencv.dnn.Net;
-import org.opencv.imgproc.Imgproc;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 public class FaceRecognition {

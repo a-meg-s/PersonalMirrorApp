@@ -1,7 +1,5 @@
-package com.example.uimirror;
+package com.example.uimirror.biometrie;
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import org.opencv.core.Core;
@@ -12,10 +10,6 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 

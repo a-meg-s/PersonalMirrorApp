@@ -1,16 +1,13 @@
-package com.example.uimirror
+package com.example.uimirror.musik
 
 import android.widget.ImageButton
-import android.content.Context
-import android.media.MediaPlayer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.graphics.Color
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.uimirror.R
 
 class SongAdapter(
     private val songs: List<Song>, // Liste von Song-Objekten

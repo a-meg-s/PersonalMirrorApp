@@ -18,8 +18,14 @@ import androidx.lifecycle.coroutineScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
+import com.example.uimirror.biometrie.AssetManager
+import com.example.uimirror.biometrie.FaceDetection
+import com.example.uimirror.biometrie.FacesAdapter
+import com.example.uimirror.musik.MusicPlayer
+import com.example.uimirror.musik.MyApp
 import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Person
+import com.example.uimirror.biometrie.matToByteArray
 import kotlinx.coroutines.launch
 import org.opencv.core.Core
 import org.opencv.core.Core.ROTATE_90_COUNTERCLOCKWISE
@@ -57,7 +63,7 @@ class AddUserActivity : AppCompatActivity() {
         musicPlayer = (applicationContext as MyApp).musicPlayer
         permissionHandler = PermissionHandler(this)
 
-        Companion.loadModels(this)
+        loadModels(this)
 
         previewView = findViewById(R.id.previewView)
         previewView = findViewById(R.id.previewView)
@@ -111,7 +117,7 @@ class AddUserActivity : AppCompatActivity() {
             }
             if (faceRecognitionNet == null) {
                 faceRecognitionNet = Dnn.readNetFromTorch(
-                    AssetManager.getTextfileFromAssets(context,"nn4.small2.v1.t7")
+                    AssetManager.getTextfileFromAssets(context, "nn4.small2.v1.t7")
                 )
                 Log.d("CameraManager", "Init: OpenFace model loaded.")
             }

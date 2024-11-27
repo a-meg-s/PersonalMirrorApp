@@ -1,8 +1,7 @@
-package com.example.uimirror
+package com.example.uimirror.biometrie
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.example.uimirror.database.models.Person
 import org.opencv.android.Utils
 import org.opencv.core.CvType
 import org.opencv.core.Mat

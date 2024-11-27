@@ -6,10 +6,12 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.coroutineScope
 import androidx.room.Room
+import com.example.uimirror.alarm.AlarmEditorActivity
+import com.example.uimirror.musik.MusicPlayer
+import com.example.uimirror.musik.MyApp
+import com.example.uimirror.musik.SongSelectionActivity
 import com.example.uimirror.database.PersonDatabase
-import com.example.uimirror.database.models.Music
 import com.example.uimirror.database.models.Person
 import com.example.uimirror.databinding.ActivityMainBinding
 import com.example.uimirror.events.EventsListingActivity

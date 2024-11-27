@@ -10,9 +10,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.coroutineScope
 import androidx.room.Room
+import com.example.uimirror.biometrie.AssetManager
+import com.example.uimirror.musik.MusicPlayer
 import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Person
 import com.example.uimirror.databinding.ActivityGreetingBinding
+import com.example.uimirror.biometrie.matToByteArray
 import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
 

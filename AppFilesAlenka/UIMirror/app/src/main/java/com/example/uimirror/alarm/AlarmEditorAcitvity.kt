@@ -1,4 +1,4 @@
-package com.example.uimirror
+package com.example.uimirror.alarm
 
 import android.app.AlarmManager
 import android.app.AlertDialog
@@ -16,6 +16,9 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.coroutineScope
 import androidx.room.Room
+import com.example.uimirror.CameraManager
+import com.example.uimirror.PermissionHandler
+import com.example.uimirror.R
 import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Alarm
 import com.example.uimirror.database.models.Person

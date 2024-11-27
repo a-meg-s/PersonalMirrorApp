@@ -1,4 +1,4 @@
-package com.example.uimirror
+package com.example.uimirror.musik
 
 //Importiert
 import android.os.Bundle
@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import android.widget.Button
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
+import com.example.uimirror.CameraManager
+import com.example.uimirror.PermissionHandler
+import com.example.uimirror.R
 import com.example.uimirror.database.PersonDatabase
 import kotlinx.coroutines.launch
 
