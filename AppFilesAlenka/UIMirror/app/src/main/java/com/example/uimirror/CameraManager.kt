@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.opencv.core.Core
 import org.opencv.core.Core.ROTATE_180
+import org.opencv.core.Core.ROTATE_90_COUNTERCLOCKWISE
 import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.dnn.Dnn
