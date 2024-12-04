@@ -12,8 +12,6 @@ import androidx.lifecycle.coroutineScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
-import com.example.uimirror.CameraManager
-import com.example.uimirror.PermissionHandler
 import com.example.uimirror.R
 import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Event
@@ -22,10 +20,6 @@ import com.example.uimirror.databinding.ActivityEventsBinding
 import kotlinx.coroutines.launch
 
 class EventsListingActivity : AppCompatActivity(), EventsAdapter.EventsClickInterface {
-
-    private lateinit var cameraManager: CameraManager // Hinzufügen der Kamera-Manager Instanz
-    private lateinit var permissionHandler: PermissionHandler // Instanz von PermissionHandler
-
 
     private lateinit var binding: ActivityEventsBinding
     private lateinit var adapter: EventsAdapter
@@ -61,15 +55,6 @@ class EventsListingActivity : AppCompatActivity(), EventsAdapter.EventsClickInte
         binding.fabAddEvent.setOnClickListener {
             val intent = Intent(this, AddEventActivity::class.java)
             startActivity(intent)
-        }
-
-        cameraManager = CameraManager(this, findViewById(R.id.previewView), database, false) // Initialisiere CameraManager mit PreviewView
-        permissionHandler = PermissionHandler(this) // Initialisiere den PermissionHandler
-        // Starte die Kamera, wenn die Berechtigung gewährt ist
-        if (permissionHandler.isCameraPermissionGranted()) {
-            cameraManager.startCamera()
-        } else {
-            permissionHandler.showPermissionCameraDeniedDialog()
         }
     }
 

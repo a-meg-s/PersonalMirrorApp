@@ -36,7 +36,7 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-            //musicPlayer = (applicationContext as MyApp).musicPlayer
+        musicPlayer = (applicationContext as MyApp).musicPlayer
         permissionHandler = PermissionHandler(this)
 
         // UI-Elemente initialisieren

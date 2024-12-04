@@ -90,8 +90,7 @@ class MainActivity : AppCompatActivity() {
         // Initialisiere die Klassen für Kamera und Berechtigungen
         cameraManager = CameraManager(this, binding.previewView, database, false)
         permissionHandler = PermissionHandler(this)
-        //musicPlayer = (applicationContext as MyApp).musicPlayer // Musikplayer initialisieren
-        musicPlayer = MusicPlayer(this)
+        musicPlayer = (applicationContext as MyApp).musicPlayer // Musikplayer initialisieren
 
         // Berechtigungen beim Start überprüfen
 
