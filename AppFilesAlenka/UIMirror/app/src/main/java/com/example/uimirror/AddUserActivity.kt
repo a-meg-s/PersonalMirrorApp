@@ -28,7 +28,10 @@ import com.example.uimirror.musik.MyApp
 import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Person
 import com.example.uimirror.biometrie.matToByteArray
+import com.example.uimirror.security.KeystoreManager
 import kotlinx.coroutines.launch
+import net.sqlcipher.database.SQLiteDatabase
+import net.sqlcipher.database.SupportFactory
 import org.opencv.core.Core
 import org.opencv.core.Core.ROTATE_90_COUNTERCLOCKWISE
 import org.opencv.core.CvType
@@ -94,12 +97,15 @@ class AddUserActivity : AppCompatActivity() {
         }
     }
 
-    private val database by lazy {
+    val database by lazy {
+        val passphrase = SQLiteDatabase.getBytes(KeystoreManager.getPassphrase())
+        val factory = SupportFactory(passphrase)
         Room.databaseBuilder(
-            applicationContext,
+            this.applicationContext,
             PersonDatabase::class.java,
-            "person_database"
-        ).fallbackToDestructiveMigration()  // Daten werden bei jeder Versionsänderung gelöscht
+            "encrypted_person_database"
+        )
+            .openHelperFactory(factory)
             .build()
     }
 

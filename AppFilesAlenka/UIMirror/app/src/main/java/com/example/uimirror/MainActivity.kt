@@ -14,12 +14,16 @@ import com.example.uimirror.musik.SongSelectionActivity
 import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Person
 import com.example.uimirror.databinding.ActivityMainBinding
+import com.example.uimirror.database.DatabaseUtils
+import com.example.uimirror.security.KeystoreManager
 import com.example.uimirror.events.EventsListingActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.opencv.android.OpenCVLoader
+import net.sqlcipher.database.SQLiteDatabase
+import net.sqlcipher.database.SupportFactory
 
 
 // MainActivity ist die Hauptklasse der App, die von AppCompatActivity erbt
@@ -31,13 +35,107 @@ class MainActivity : AppCompatActivity() {
     private lateinit var permissionHandler: PermissionHandler // Instanz von PermissionHandler
     private lateinit var musicPlayer: MusicPlayer // Instanz von MusicPlayer
 
-
+/*
     private val database by lazy {
         Room.databaseBuilder(
             applicationContext,
             PersonDatabase::class.java,
             "person_database"
         ) .fallbackToDestructiveMigration()  // Daten werden bei jeder Versionsänderung gelöscht
+            .build()
+    }
+*/
+/*
+    private val encryptedDatabase by lazy {
+        val passphrase = SQLiteDatabase.getBytes(KeystoreManager.getPassphrase())
+        val factory = SupportFactory(passphrase)
+        Room.databaseBuilder(
+            applicationContext,
+            PersonDatabase::class.java,
+            "encrypted_person_database" // New encrypted database name
+        )
+            .openHelperFactory(factory)
+            .build()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Step 1: Backup unencrypted database
+        val isBackupSuccessful = DatabaseUtils.backupDatabase(this)
+        if (!isBackupSuccessful) {
+            Toast.makeText(this, "Database backup failed. Aborting migration.", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        // Step 2: Migrate to encrypted database
+        migrateToEncryptedDatabase()
+
+        // Initialize OpenCV and other components
+        initializeOpenCV()
+        initializeComponents()
+        setupUIListeners()
+
+        CoroutineScope(Dispatchers.Main).launch {
+            primaryUser = encryptedDatabase.uiMirrorDao().getPrimaryUser(true)!!
+            ckeckforAGB()
+        }
+    }
+
+    private fun migrateToEncryptedDatabase() {
+        val passphrase = SQLiteDatabase.getBytes(KeystoreManager.getPassphrase())
+        val factory = SupportFactory(passphrase)
+
+        // Open the unencrypted database
+        val unencryptedDatabase = Room.databaseBuilder(
+            applicationContext,
+            PersonDatabase::class.java,
+            "person_database" // Current unencrypted database name
+        ).build()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Retrieve all data from the unencrypted database
+                val allPersons = unencryptedDatabase.uiMirrorDao().getAllPersons()
+
+                // Open the encrypted database
+                val encryptedDatabase = Room.databaseBuilder(
+                    applicationContext,
+                    PersonDatabase::class.java,
+                    "encrypted_person_database" // New encrypted database name
+                )
+                    .openHelperFactory(factory)
+                    .build()
+
+                // Insert all data into the encrypted database
+                encryptedDatabase.uiMirrorDao().insertAll(allPersons)
+
+                // Close and delete the old database
+                unencryptedDatabase.close()
+                applicationContext.deleteDatabase("person_database")
+                Log.i("MainActivity", "Migration to encrypted database completed successfully!")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("MainActivity", "Migration failed: ${e.message}")
+            }
+        }
+    }
+*/
+
+    //NEW CODE AFTER MIGRATION IS COMPLETE
+
+
+    val database by lazy {
+        val passphrase = SQLiteDatabase.getBytes(KeystoreManager.getPassphrase())
+        val factory = SupportFactory(passphrase)
+        Room.databaseBuilder(
+            this.applicationContext,
+            PersonDatabase::class.java,
+            "encrypted_person_database"
+        )
+            .openHelperFactory(factory)
             .build()
     }
 
@@ -74,7 +172,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
     fun initializeOpenCV() {
         //Initialize OpenCVLibrary
         if (OpenCVLoader.initDebug()) {
@@ -90,8 +187,7 @@ class MainActivity : AppCompatActivity() {
         // Initialisiere die Klassen für Kamera und Berechtigungen
         cameraManager = CameraManager(this, binding.previewView, database, false)
         permissionHandler = PermissionHandler(this)
-        //musicPlayer = (applicationContext as MyApp).musicPlayer // Musikplayer initialisieren
-        musicPlayer = MusicPlayer(this)
+        musicPlayer = (applicationContext as MyApp).musicPlayer // Musikplayer initialisieren
 
         // Berechtigungen beim Start überprüfen
 

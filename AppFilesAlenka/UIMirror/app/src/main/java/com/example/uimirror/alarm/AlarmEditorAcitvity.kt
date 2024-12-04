@@ -23,7 +23,10 @@ import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Alarm
 import com.example.uimirror.database.models.Person
 import com.example.uimirror.databinding.ActivityAlarmEditorBinding
+import com.example.uimirror.security.KeystoreManager
 import kotlinx.coroutines.launch
+import net.sqlcipher.database.SQLiteDatabase
+import net.sqlcipher.database.SupportFactory
 import java.util.*
 
 class AlarmEditorActivity : AppCompatActivity() {
@@ -36,12 +39,18 @@ class AlarmEditorActivity : AppCompatActivity() {
     private lateinit var permissionHandler: PermissionHandler // Instanz von PermissionHandler
     private lateinit var primaryUser: Person
 
-    private val database by lazy {
+
+
+    val database by lazy {
+        val passphrase = SQLiteDatabase.getBytes(KeystoreManager.getPassphrase())
+        val factory = SupportFactory(passphrase)
         Room.databaseBuilder(
-            applicationContext,
+            this.applicationContext,
             PersonDatabase::class.java,
-            "person_database"
-        ).build()
+            "encrypted_person_database"
+        )
+            .openHelperFactory(factory)
+            .build()
     }
 
     @RequiresApi(Build.VERSION_CODES.M)

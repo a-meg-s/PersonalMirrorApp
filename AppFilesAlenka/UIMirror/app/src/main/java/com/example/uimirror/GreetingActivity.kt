@@ -16,7 +16,10 @@ import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Person
 import com.example.uimirror.databinding.ActivityGreetingBinding
 import com.example.uimirror.biometrie.matToByteArray
+import com.example.uimirror.security.KeystoreManager
 import kotlinx.coroutines.launch
+import net.sqlcipher.database.SQLiteDatabase
+import net.sqlcipher.database.SupportFactory
 import org.opencv.android.OpenCVLoader
 
 class GreetingActivity : AppCompatActivity() {
@@ -26,12 +29,16 @@ class GreetingActivity : AppCompatActivity() {
     private lateinit var permissionHandler: PermissionHandler // PermissionHandler Instanz
     private lateinit var musicPlayer: MusicPlayer // Instanz von MusicPlayer
 
-    private val database by lazy {
+    val passphrase = SQLiteDatabase.getBytes(KeystoreManager.getPassphrase())
+    val factory = SupportFactory(passphrase)
+
+    val database by lazy {
         Room.databaseBuilder(
-            applicationContext,
+            this.applicationContext,
             PersonDatabase::class.java,
-            "person_database"
-        ) .fallbackToDestructiveMigration()
+            "encrypted_person_database"
+        )
+            .openHelperFactory(factory)
             .build()
     }
 
@@ -124,7 +131,7 @@ class GreetingActivity : AppCompatActivity() {
     }
 
     private suspend fun addPersonsIfNeeded() {
-        //database.personDao().deleteAllPersons()
+        //database.uiMirrorDao().deleteAllPersons()
         val allPersons = getAllPersons()
         if (allPersons.isEmpty()) {
             Log.d("addPersonsIfNeeded", "Users added")
