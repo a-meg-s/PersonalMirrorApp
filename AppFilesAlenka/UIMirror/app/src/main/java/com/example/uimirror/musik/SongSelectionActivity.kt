@@ -40,10 +40,7 @@ class SongSelectionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_song_selection)
 
-<<<<<<< HEAD
         //musicPlayer = (applicationContext as MyApp).musicPlayer
-=======
->>>>>>> 00a0c8d278f408509d9782811bdd557c3b1bd0f6
         musicPlayer = MusicPlayer(this)
         setupSongList()
 
