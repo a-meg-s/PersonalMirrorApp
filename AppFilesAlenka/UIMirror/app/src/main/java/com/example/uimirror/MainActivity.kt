@@ -124,6 +124,22 @@ class MainActivity : AppCompatActivity() {
     }
     */
 
+
+    /* NEW CODE AFTER MIGRATION IS COMPLETE
+    val passphrase = SQLiteDatabase.getBytes(KeystoreManager.getPassphrase())
+    val factory = SupportFactory(passphrase)
+
+    val database by lazy {
+        Room.databaseBuilder(
+            context.applicationContext,
+            PersonDatabase::class.java,
+            "encrypted_person_database"
+        )
+            .openHelperFactory(factory)
+            .build()
+    }
+    */
+
     // Getter-Methoden für den Zugriff im PermissionHandler
     fun getCameraManager(): CameraManager = cameraManager
     fun getBinding(): ActivityMainBinding = binding
