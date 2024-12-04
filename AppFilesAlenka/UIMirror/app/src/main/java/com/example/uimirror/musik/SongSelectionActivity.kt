@@ -15,7 +15,10 @@ import com.example.uimirror.CameraManager
 import com.example.uimirror.PermissionHandler
 import com.example.uimirror.R
 import com.example.uimirror.database.PersonDatabase
+import com.example.uimirror.security.KeystoreManager
 import kotlinx.coroutines.launch
+import net.sqlcipher.database.SQLiteDatabase
+import net.sqlcipher.database.SupportFactory
 
 class SongSelectionActivity : AppCompatActivity() {
     private lateinit var musicPlayer: MusicPlayer
@@ -25,12 +28,16 @@ class SongSelectionActivity : AppCompatActivity() {
     private lateinit var cameraManager: CameraManager // Hinzufügen der Kamera-Manager Instanz
     private lateinit var permissionHandler: PermissionHandler // Instanz von PermissionHandler
 
-    private val database by lazy {
+
+    val database by lazy {
+        val passphrase = SQLiteDatabase.getBytes(KeystoreManager.getPassphrase())
+        val factory = SupportFactory(passphrase)
         Room.databaseBuilder(
-            applicationContext,
+            this.applicationContext,
             PersonDatabase::class.java,
-            "person_database"
-        ) .fallbackToDestructiveMigration()  // Daten werden bei jeder Versionsänderung gelöscht
+            "encrypted_person_database"
+        )
+            .openHelperFactory(factory)
             .build()
     }
 

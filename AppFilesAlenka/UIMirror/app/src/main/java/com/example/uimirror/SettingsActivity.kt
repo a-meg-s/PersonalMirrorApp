@@ -13,9 +13,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.cardview.widget.CardView
 import com.example.uimirror.musik.MusicPlayer
 import com.example.uimirror.musik.MyApp
+import com.example.uimirror.security.KeystoreManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.sqlcipher.database.SQLiteDatabase
+import net.sqlcipher.database.SupportFactory
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -23,12 +26,17 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var permissionHandler: PermissionHandler
     private lateinit var cameraManager: CameraManager
 
-    private val database by lazy {
+
+
+    val database by lazy {
+        val passphrase = SQLiteDatabase.getBytes(KeystoreManager.getPassphrase())
+        val factory = SupportFactory(passphrase)
         Room.databaseBuilder(
-            applicationContext,
+            this.applicationContext,
             PersonDatabase::class.java,
-            "person_database"
-        ).fallbackToDestructiveMigration() // Daten werden bei jeder Versionsänderung gelöscht
+            "encrypted_person_database"
+        )
+            .openHelperFactory(factory)
             .build()
     }
 

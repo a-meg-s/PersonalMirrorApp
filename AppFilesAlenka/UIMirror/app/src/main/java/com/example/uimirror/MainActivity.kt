@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var permissionHandler: PermissionHandler // Instanz von PermissionHandler
     private lateinit var musicPlayer: MusicPlayer // Instanz von MusicPlayer
 
-
+/*
     private val database by lazy {
         Room.databaseBuilder(
             applicationContext,
@@ -44,8 +44,8 @@ class MainActivity : AppCompatActivity() {
         ) .fallbackToDestructiveMigration()  // Daten werden bei jeder Versionsänderung gelöscht
             .build()
     }
+*/
 
-    /*
     private val encryptedDatabase by lazy {
         val passphrase = SQLiteDatabase.getBytes(KeystoreManager.getPassphrase())
         val factory = SupportFactory(passphrase)
@@ -122,29 +122,29 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    */
 
 
-    /* NEW CODE AFTER MIGRATION IS COMPLETE
-    val passphrase = SQLiteDatabase.getBytes(KeystoreManager.getPassphrase())
-    val factory = SupportFactory(passphrase)
+    //NEW CODE AFTER MIGRATION IS COMPLETE
+
 
     val database by lazy {
+        val passphrase = SQLiteDatabase.getBytes(KeystoreManager.getPassphrase())
+        val factory = SupportFactory(passphrase)
         Room.databaseBuilder(
-            context.applicationContext,
+            this.applicationContext,
             PersonDatabase::class.java,
             "encrypted_person_database"
         )
             .openHelperFactory(factory)
             .build()
     }
-    */
 
     // Getter-Methoden für den Zugriff im PermissionHandler
     fun getCameraManager(): CameraManager = cameraManager
     fun getBinding(): ActivityMainBinding = binding
     private lateinit var primaryUser: Person
 
+/*
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
+*/
 
     fun initializeOpenCV() {
         //Initialize OpenCVLibrary

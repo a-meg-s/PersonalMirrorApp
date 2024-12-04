@@ -8,10 +8,13 @@ import android.os.Looper
 import androidx.room.Room
 import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Person
+import com.example.uimirror.security.KeystoreManager
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import net.sqlcipher.database.SQLiteDatabase
+import net.sqlcipher.database.SupportFactory
 
 
 class MusicPlayer(private val context: Context) {
@@ -33,13 +36,18 @@ class MusicPlayer(private val context: Context) {
     private val handler = Handler(Looper.getMainLooper())
     private var primaryUser :Person? = null
 
-    private val database = Room.databaseBuilder(
-        context,
-        PersonDatabase::class.java,
-        "person_database"
-    )
-        .fallbackToDestructiveMigration()  // Daten werden bei jeder Versionsänderung gelöscht
-        .build()
+    val database by lazy {
+        val passphrase = SQLiteDatabase.getBytes(KeystoreManager.getPassphrase())
+        val factory = SupportFactory(passphrase)
+        Room.databaseBuilder(
+            context,
+            PersonDatabase::class.java,
+            "encrypted_person_database"
+        )
+            .openHelperFactory(factory)
+            .build()
+    }
+
     val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     init {

@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.uimirror"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -43,12 +43,11 @@ android {
 dependencies {
 
     //Room dependencies
-    //implementation("androidx.room:room-runtime:2.6.1")
-    //kapt("androidx.room:room-compiler:2.6.1")
-    //implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
 
     // SQLCipher dependency
-    //implementation("net.zetetic:android-database-sqlcipher:4.5.0@aar")
+    implementation("net.zetetic:android-database-sqlcipher:4.5.0@aar")
 
     //XCamera Abhängigkeiten
     implementation ("androidx.camera:camera-core:1.1.0")

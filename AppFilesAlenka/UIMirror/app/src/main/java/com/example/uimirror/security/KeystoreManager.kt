@@ -40,7 +40,7 @@ object KeystoreManager {
     /**
      * Retrieves the encryption passphrase derived from the secret key.
      */
-    fun getPassphrase(): ByteArray {
-        return getOrCreateKey().toString().toByteArray()
+    fun getPassphrase(): CharArray {
+        return getOrCreateKey().toString().toCharArray()
     }
 }
