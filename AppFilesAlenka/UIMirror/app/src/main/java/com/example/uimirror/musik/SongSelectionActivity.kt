@@ -40,7 +40,8 @@ class SongSelectionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_song_selection)
 
-        musicPlayer = (applicationContext as MyApp).musicPlayer
+        //musicPlayer = (applicationContext as MyApp).musicPlayer
+        musicPlayer = MusicPlayer(this)
         setupSongList()
 
         // setzt Hintergrundfarbe des in DB ausgewählten Songs
