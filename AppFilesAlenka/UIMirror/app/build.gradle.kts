@@ -42,6 +42,14 @@ android {
 
 dependencies {
 
+    //Room dependencies
+    //implementation("androidx.room:room-runtime:2.6.1")
+    //kapt("androidx.room:room-compiler:2.6.1")
+    //implementation("androidx.room:room-ktx:2.6.1")
+
+    // SQLCipher dependency
+    //implementation("net.zetetic:android-database-sqlcipher:4.5.0@aar")
+
     //XCamera Abhängigkeiten
     implementation ("androidx.camera:camera-core:1.1.0")
     implementation ("androidx.camera:camera-camera2:1.1.0")
