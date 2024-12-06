@@ -15,6 +15,7 @@ import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Person
 import com.example.uimirror.databinding.ActivityMainBinding
 import com.example.uimirror.database.DatabaseUtils
+import com.example.uimirror.events.EventsListBottomSheet
 import com.example.uimirror.security.KeystoreManager
 import com.example.uimirror.events.EventsListingActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -221,8 +222,8 @@ class MainActivity : AppCompatActivity() {
 
         // Setze den OnClickListener für das zurück zum Login (mail Icon)
         binding.calendarIcon?.setOnClickListener {
-            val intent = Intent(this, EventsListingActivity::class.java)
-            startActivity(intent)
+            val eventsBottomSheetDialogFragment = EventsListBottomSheet()
+            eventsBottomSheetDialogFragment.show(supportFragmentManager, "EventListScreen")
         }
 
         // Setze den OnClickListener für das zurück zum Login (mail Icon)
