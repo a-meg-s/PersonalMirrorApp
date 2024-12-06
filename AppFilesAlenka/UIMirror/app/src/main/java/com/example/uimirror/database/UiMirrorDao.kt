@@ -43,8 +43,8 @@ interface PersonDao {
     @Query("DELETE FROM PERSON WHERE name = :name")
     suspend fun deletePersonsByName(name: String)
 
-    @Query("UPDATE Person SET alarm = null, selectedSongId = null, songPosition = 0, isMusicEnabled = 1, isAGBread = 0 WHERE id = :personId")
-    suspend fun resetPrimaryUser(personId: Int)
+    // @Query("UPDATE Person SET alarm = null, selectedSongId = null, songPosition = 0, isMusicEnabled = 1, isAGBread = 0 WHERE id = :personId")
+    //suspend fun resetPrimaryUser(personId: Int)
 
     // Neue Methoden für Musikdaten hinzufügen
     @Query("UPDATE Person SET selectedSongId = :songId, songPosition = :position WHERE id = :personId")

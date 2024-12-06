@@ -84,13 +84,17 @@ class SettingsActivity : AppCompatActivity() {
                      musicPlayer.pauseMainSong()
                      CoroutineScope(Dispatchers.Main).launch {
                          val primaryUser = database.uiMirrorDao().getPrimaryUser(true)
-                         primaryUser?.let{
-                             database.uiMirrorDao().resetPrimaryUser(it.id)
-                             it.events.clear()
-                             //database.uiMirrorDao().updatePerson(it) //updatet es falsch?
+                         primaryUser?.let { user ->
+                             user.events.clear()
+                             user.alarm = null
+                             user.selectedSongId = null
+                             user.songPosition = 0
+                             user.isMusicEnabled = true
+                             user.isAGBread = false
+
+                             database.uiMirrorDao().insertPerson(user)
                          }
                          Log.e("DeleteUser", "isPrimaryUser: ${primaryUser?.name}")
-
                      }
                      Toast.makeText(this, "Benutzerdaten wurden gelöscht", Toast.LENGTH_SHORT).show()
 
