@@ -11,6 +11,8 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.coroutineScope
 import androidx.room.Room
+import com.example.uimirror.CameraManager
+import com.example.uimirror.PermissionHandler
 import com.example.uimirror.R
 import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Event
@@ -29,6 +31,8 @@ class AddEventActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddEventBinding
     var calendar: Calendar = Calendar.getInstance()
     var calendarView: CalendarView? = null
+    private lateinit var permissionHandler: PermissionHandler
+    private lateinit var cameraManager: CameraManager
 
     val database by lazy {
         val passphrase = SQLiteDatabase.getBytes(KeystoreManager.getPassphrase())
@@ -56,6 +60,17 @@ class AddEventActivity : AppCompatActivity() {
             val allPersons = getAllPersons()
             primaryUser = database.uiMirrorDao().getPrimaryUser(true) ?: allPersons.first()
         }
+        // Initialisiere Kamera und Permissionhandler (damit Preview funktioniert)
+        cameraManager = CameraManager(this, findViewById(R.id.previewView), database, false)
+        permissionHandler = PermissionHandler(this)
+
+        // Kamera starten, wenn Berechtigung gewährt ist
+        if (permissionHandler.isCameraPermissionGranted()) {
+            cameraManager.startCamera()
+        } else {
+            permissionHandler.showPermissionCameraDeniedDialog()
+        }
+
         tvTimeSet.visibility = View.VISIBLE
         tvTimeSet.text = "Event set for ${readDate(calendar.timeInMillis)}"
 

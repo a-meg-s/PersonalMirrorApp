@@ -12,6 +12,8 @@ import androidx.lifecycle.coroutineScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
+import com.example.uimirror.CameraManager
+import com.example.uimirror.PermissionHandler
 import com.example.uimirror.R
 import com.example.uimirror.database.PersonDatabase
 import com.example.uimirror.database.models.Event
@@ -27,7 +29,8 @@ class EventsListingActivity : AppCompatActivity(), EventsAdapter.EventsClickInte
     private lateinit var binding: ActivityEventsBinding
     private lateinit var adapter: EventsAdapter
     private var eventsList: MutableList<Event> = mutableListOf()
-
+    private lateinit var permissionHandler: PermissionHandler
+    private lateinit var cameraManager: CameraManager
 
     val database by lazy {
         val passphrase = SQLiteDatabase.getBytes(KeystoreManager.getPassphrase())
@@ -48,6 +51,17 @@ class EventsListingActivity : AppCompatActivity(), EventsAdapter.EventsClickInte
         super.onCreate(savedInstanceState)
         binding = ActivityEventsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Initialisiere Kamera und Permissionhandler (damit Preview funktioniert)
+        cameraManager = CameraManager(this, findViewById(R.id.previewView), database, false)
+        permissionHandler = PermissionHandler(this)
+
+        // Kamera starten, wenn Berechtigung gewährt ist
+        if (permissionHandler.isCameraPermissionGranted()) {
+            cameraManager.startCamera()
+        } else {
+            permissionHandler.showPermissionCameraDeniedDialog()
+        }
 
         val recyclerview = findViewById<RecyclerView>(R.id.rvEvents)
 
@@ -70,6 +84,18 @@ class EventsListingActivity : AppCompatActivity(), EventsAdapter.EventsClickInte
 
     override fun onResume() {
         super.onResume()
+
+        // Initialisiere Kamera und Permissionhandler (damit Preview funktioniert)
+        cameraManager = CameraManager(this, findViewById(R.id.previewView), database, false)
+        permissionHandler = PermissionHandler(this)
+
+        // Kamera starten, wenn Berechtigung gewährt ist
+        if (permissionHandler.isCameraPermissionGranted()) {
+            cameraManager.startCamera()
+        } else {
+            permissionHandler.showPermissionCameraDeniedDialog()
+        }
+
         lifecycle.coroutineScope.launch {
             val allPersons = getAllPersons()
             primaryUser = database.uiMirrorDao().getPrimaryUser(true) ?: allPersons.first()
