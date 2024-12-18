@@ -124,6 +124,8 @@ class EventsListingActivity : AppCompatActivity(), EventsAdapter.EventsClickInte
         builder.setPositiveButton("Yes") { _, _ ->
             lifecycle.coroutineScope.launch {
                 database.uiMirrorDao().deleteEvent(event.id)
+                primaryUser.events.remove(event)
+                database.uiMirrorDao().insertPerson(primaryUser)
                 eventsList.remove(event)
                 adapter.updateList(eventsList)
                 toggleEmptyListText(eventsList)

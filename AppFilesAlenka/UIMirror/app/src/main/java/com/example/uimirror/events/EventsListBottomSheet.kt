@@ -118,11 +118,13 @@ class EventsListBottomSheet : BottomSheetDialogFragment(), EventsClickInterface 
 
     override fun onDeleteEventClicked(event: Event) {
         this.activity?.let {
-            val builder = AlertDialog.Builder(it.applicationContext)
+            val builder = AlertDialog.Builder(requireContext())
             builder.setMessage("Are you sure you want to delete this event?")
             builder.setPositiveButton("Yes") { _, _ ->
                 lifecycle.coroutineScope.launch {
                     database.uiMirrorDao().deleteEvent(event.id)
+                    primaryUser.events.remove(event)
+                    database.uiMirrorDao().insertPerson(primaryUser)
                     eventsList.remove(event)
                     adapter.updateList(eventsList)
                     toggleEmptyListText(eventsList)
