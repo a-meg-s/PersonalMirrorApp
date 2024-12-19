@@ -238,6 +238,7 @@ class MainActivity : AppCompatActivity() {
                 .setMessage("Möchten Sie sich wirklich abmelden?")
                 .setPositiveButton("Logout") { dialog, _ ->
                     dialog.dismiss()
+                    musicPlayer.pauseMainSong()
                     CoroutineScope(Dispatchers.Main).launch {
                         Log.e("logout", "isPrimaryUser: ${primaryUser.isPrimaryUser}")
                         val primaryUser = database.uiMirrorDao().getPrimaryUser(true)
